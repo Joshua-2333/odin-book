@@ -1,0 +1,45 @@
+# =========================
+# Dependencies
+# =========================
+node_modules/
+
+# =========================
+# Environment variables / secrets
+# =========================
+.env
+.env.*
+prisma/.env
+
+# =========================
+# Logs
+# =========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# =========================
+# Build / cache artifacts
+# =========================
+dist/
+build/
+.cache/
+
+# =========================
+# Prisma
+# =========================
+prisma/migrations/dev.db
+prisma/migrations/dev.db-journal
+
+# =========================
+# Optional uploads (future-proofing)
+# =========================
+uploads/
