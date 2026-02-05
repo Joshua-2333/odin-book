@@ -1,0 +1,63 @@
+/* src/public/css/components.css */
+
+/* Flash message container */
+.flash {
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  max-width: 600px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInFlash 0.4s forwards;
+}
+
+/* Success flash */
+.flash-success {
+  background-color: #e6ffed;
+  color: #2f855a;
+  border: 1px solid #2f855a33;
+}
+
+/* Error flash */
+.flash-error {
+  background-color: #ffe6e6;
+  color: #c53030;
+  border: 1px solid #c5303033;
+}
+
+/* Fade-in animation */
+@keyframes fadeInFlash {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade-out animation (to be triggered by JS) */
+@keyframes fadeOutFlash {
+  from {
+    opacity: 1;
+    height: auto;
+    margin: 1rem 0;
+    padding: 1rem 1.5rem;
+  }
+  to {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Make sure flash messages look good on mobile */
+@media (max-width: 768px) {
+  .flash {
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}

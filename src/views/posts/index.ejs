@@ -1,0 +1,89 @@
+<!-- src/views/posts/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Posts - Odin-Book</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main class="posts-page">
+    <h1>Posts</h1>
+
+    <!-- Flash messages -->
+    <% if (success) { %>
+      <div class="flash flash-success" id="flash-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="flash flash-error" id="flash-error"><%= error %></div>
+    <% } %>
+
+    <% if (!currentUser.guest) { %>
+      <form action="/posts" method="POST" class="post-form">
+        <textarea name="content" placeholder="What's on your mind?" required></textarea>
+        <button type="submit">Post</button>
+      </form>
+    <% } else { %>
+      <p class="guest-note">
+        Guests can read posts but must log in to post, comment, or like.
+      </p>
+    <% } %>
+
+    <section class="posts">
+      <% posts.forEach(post => { %>
+        <article class="post">
+          <p class="post-content"><%= post.content %></p>
+
+          <div class="post-meta">
+            <span>by <strong><%= post.author.username %></strong></span>
+            <span>❤️ <%= post.likes.length %></span>
+          </div>
+
+          <% if (!currentUser.guest) { %>
+            <form action="/posts/<%= post.id %>/like" method="POST">
+              <button type="submit">Like</button>
+            </form>
+          <% } %>
+
+          <!-- Comments Section -->
+          <section class="comments">
+            <% post.comments.forEach(comment => { %>
+              <div class="comment">
+                <strong><%= comment.author.username %>:</strong>
+                <span><%= comment.content %></span>
+              </div>
+            <% }) %>
+
+            <% if (!currentUser.guest) { %>
+              <form action="/posts/<%= post.id %>/comments" method="POST" class="comment-form">
+                <input type="text" name="content" placeholder="Add a comment..." required>
+                <button type="submit">Comment</button>
+              </form>
+            <% } %>
+          </section>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+
+  <%- include("../partials/footer") %>
+
+  <script>
+    // Auto-hide flash messages after 4 seconds
+    setTimeout(() => {
+      const success = document.getElementById('flash-success');
+      const error = document.getElementById('flash-error');
+
+      [success, error].forEach(el => {
+        if (el) {
+          el.style.animation = 'fadeOutFlash 0.8s forwards';
+        }
+      });
+    }, 4000);
+  </script>
+</body>
+</html>

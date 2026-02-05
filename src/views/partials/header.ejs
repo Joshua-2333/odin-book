@@ -1,0 +1,27 @@
+<!-- src/views/partials/header.ejs -->
+<header class="site-header">
+  <nav class="nav">
+    <a href="/" class="nav-logo">Odin-Book</a>
+
+    <div class="nav-links">
+      <% if (currentUser) { %>
+        <span class="nav-user">
+          Welcome,
+          <strong><%= currentUser.username %></strong>
+          <% if (currentUser.guest) { %>
+            (Guest)
+          <% } %>
+        </span>
+
+        <% if (!currentUser.guest) { %>
+          <a href="/users/<%= currentUser.id %>">Profile</a>
+        <% } %>
+
+        <a href="/logout">Logout</a>
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      <% } %>
+    </div>
+  </nav>
+</header>

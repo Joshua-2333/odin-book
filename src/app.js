@@ -35,7 +35,7 @@ app.use(passport.session());
 // Guest middleware 
 app.use(guestMiddleware);
 
-// Flash + locals 
+// Flash + locals
 app.use((req, res, next) => {
   res.locals.currentUser = req.user || null;
   res.locals.success = req.session.success || null;
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 // Routes 
 app.use("/", routes);
 
-// 404 
+// 404
 app.use((req, res) => {
   res.status(404).render("partials/404", {
     title: "Page Not Found",
