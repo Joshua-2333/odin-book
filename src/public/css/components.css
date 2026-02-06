@@ -1,6 +1,6 @@
 /* src/public/css/components.css */
 
-/* Flash messages */*/
+/* Flash messages */
 .flash {
   padding: 1rem 1.5rem;
   margin: 1rem 0;
@@ -15,21 +15,18 @@
   animation: fadeInFlash 0.4s forwards;
 }
 
-/* Success flash */
 .flash-success {
   background-color: #e6ffed;
   color: #2f855a;
   border: 1px solid #2f855a33;
 }
 
-/* Error flash */
 .flash-error {
   background-color: #ffe6e6;
   color: #c53030;
   border: 1px solid #c5303033;
 }
 
-/* Fade-in animation */
 @keyframes fadeInFlash {
   to {
     opacity: 1;
@@ -37,7 +34,6 @@
   }
 }
 
-/* Fade-out animation (triggered by JS) */
 @keyframes fadeOutFlash {
   from {
     opacity: 1;
@@ -53,8 +49,8 @@
   }
 }
 
-/* Profile Page */
-/* Profile header container (stats + follow button) */
+/* Profile page */
+/* Header container (stats + follow button) */
 .profile-header {
   display: flex;
   align-items: center;
@@ -77,12 +73,21 @@
   text-decoration: none;
   color: #3182ce; /* blue link color */
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
   transition: color 0.2s;
+}
+
+.profile-stats a svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
 }
 
 .profile-stats a:hover,
 .profile-stats a:focus {
-  color: #2c5282; /* darker blue on hover/focus */
+  color: #2c5282;
   outline: 2px solid #2c5282;
   outline-offset: 2px;
 }
@@ -99,7 +104,6 @@
   transition: background-color 0.2s, color 0.2s, transform 0.1s;
 }
 
-/* Primary button (Follow) */
 .btn-primary {
   background-color: #3182ce;
   color: #ffffff;
@@ -113,7 +117,6 @@
   transform: translateY(-1px);
 }
 
-/* Secondary button (Unfollow) */
 .btn-secondary {
   background-color: #e2e8f0;
   color: #1a202c;
@@ -127,8 +130,118 @@
   transform: translateY(-1px);
 }
 
+/* Posts on profile page */
+.user-posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.user-posts .post {
+  background-color: #f7fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.user-posts .post:hover,
+.user-posts .post:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.user-posts .post .post-meta {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.user-posts .post .post-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: default;
+  transition: color 0.2s;
+}
+
+.user-posts .post .post-meta span:hover,
+.user-posts .post .post-meta span:focus {
+  color: #3182ce;
+  outline: 2px solid #3182ce;
+  outline-offset: 2px;
+}
+
+.user-posts .post .post-meta svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+/* Comment icon adjustments */
+.comment-icon svg,
+.comment-toggle svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+/* Collapsible comments with smooth slide */
+.comments {
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid #e2e8f0;
+  max-height: 0;       /* collapsed by default */
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+}
+
+.comments.open {
+  max-height: 500px;   /* enough to show content */
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.comment {
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+/* Comment form */
+.comment-form {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-form input[type="text"] {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #cbd5e0;
+}
+
+.comment-form button {
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  border: none;
+  background-color: #3182ce;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.comment-form button:hover,
+.comment-form button:focus {
+  background-color: #2c5282;
+  outline: 2px solid #2c5282;
+  outline-offset: 2px;
+}
+
 /* Responsive adjustments */
-/* Smaller screens adjustments */
 @media (max-width: 1024px) {
   .profile-header {
     justify-content: flex-start;
@@ -162,5 +275,9 @@
   .btn-secondary {
     width: 100%;
     text-align: center;
+  }
+
+  .user-posts {
+    grid-template-columns: 1fr;
   }
 }

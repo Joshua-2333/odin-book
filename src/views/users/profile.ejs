@@ -12,7 +12,36 @@
   <%- include("../partials/header") %>
 
   <main class="profile-page">
-    <h1><%= profileUser.username %></h1>
+    <!-- Profile header -->
+    <div class="profile-header">
+      <h1><%= profileUser.username %></h1>
+
+      <!-- Stats with icons -->
+      <div class="profile-stats">
+        <a href="/users/<%= profileUser.id %>/followers">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-8 0c1.657 0 3-1.343 3-3S9.657 5 8 5 5 6.343 5 8s1.343 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+          <strong><%= followersCount %></strong> Followers
+        </a>
+
+        <a href="/users/<%= profileUser.id %>/following">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+          </svg>
+          <strong><%= followingCount %></strong> Following
+        </a>
+      </div>
+
+      <!-- Follow / Unfollow button -->
+      <% if (!currentUser.guest && !isOwnProfile) { %>
+        <form action="/users/<%= profileUser.id %>/<%= isFollowing ? 'unfollow' : 'follow' %>" method="POST">
+          <button type="submit" class="<%= isFollowing ? 'btn-secondary' : 'btn-primary' %>">
+            <%= isFollowing ? 'Unfollow' : 'Follow' %>
+          </button>
+        </form>
+      <% } %>
+    </div>
 
     <!-- Flash messages -->
     <% if (success) { %>
@@ -20,26 +49,6 @@
     <% } %>
     <% if (error) { %>
       <div class="flash flash-error" id="flash-error"><%= error %></div>
-    <% } %>
-
-    <!-- Follower / Following stats with links -->
-    <div class="profile-stats">
-      <a href="/users/<%= profileUser.id %>/followers">
-        <strong><%= followersCount %></strong> Followers
-      </a>
-      |
-      <a href="/users/<%= profileUser.id %>/following">
-        <strong><%= followingCount %></strong> Following
-      </a>
-    </div>
-
-    <!-- Follow / Unfollow button (for other users only) -->
-    <% if (!currentUser.guest && !isOwnProfile) { %>
-      <form action="/users/<%= profileUser.id %>/<%= isFollowing ? 'unfollow' : 'follow' %>" method="POST">
-        <button type="submit" class="<%= isFollowing ? 'btn-secondary' : 'btn-primary' %>">
-          <%= isFollowing ? 'Unfollow' : 'Follow' %>
-        </button>
-      </form>
     <% } %>
 
     <!-- User posts -->
@@ -51,11 +60,45 @@
       <% } %>
 
       <% posts.forEach(post => { %>
-        <article class="post">
+        <article class="post" tabindex="0">
           <p class="post-content"><%= post.content %></p>
           <div class="post-meta">
-            <span>❤️ <%= post.likes.length %></span>
+            <!-- Likes -->
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 
+                         4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 
+                         14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 
+                         6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <%= post.likes.length %>
+            </span>
+
+            <!-- Comments toggle -->
+            <span class="comment-toggle" tabindex="0" aria-expanded="false" aria-controls="comments-<%= post.id %>">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 6h-2v9H6v2c0 1.1.9 2 2 2h9l4 4V8c0-1.1-.9-2-2-2z"/>
+              </svg>
+              <%= post.comments.length %> Comments
+            </span>
           </div>
+
+          <!-- Collapsible comments -->
+          <section class="comments" id="comments-<%= post.id %>">
+            <% post.comments.forEach(comment => { %>
+              <div class="comment">
+                <strong><%= comment.author.username %>:</strong>
+                <span><%= comment.content %></span>
+              </div>
+            <% }) %>
+
+            <% if (!currentUser.guest) { %>
+              <form action="/posts/<%= post.id %>/comments" method="POST" class="comment-form">
+                <input type="text" name="content" placeholder="Add a comment..." required>
+                <button type="submit">Comment</button>
+              </form>
+            <% } %>
+          </section>
         </article>
       <% }) %>
     </section>
@@ -64,17 +107,39 @@
   <%- include("../partials/footer") %>
 
   <script>
-    // Auto-hide flash messages after 4 seconds
+    // Auto-hide flash messages
     setTimeout(() => {
       const success = document.getElementById("flash-success");
       const error = document.getElementById("flash-error");
-
       [success, error].forEach(el => {
-        if (el) {
-          el.style.animation = "fadeOutFlash 0.8s forwards";
-        }
+        if (el) el.style.animation = "fadeOutFlash 0.8s forwards";
       });
     }, 4000);
+
+    // Comment toggle with smooth slide
+    document.querySelectorAll(".comment-toggle").forEach(toggle => {
+      const commentsId = toggle.getAttribute("aria-controls");
+      const comments = document.getElementById(commentsId);
+
+      // Initialize collapsed
+      comments.classList.remove("open");
+
+      const toggleComments = () => {
+        const isOpen = comments.classList.contains("open");
+        comments.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", !isOpen);
+      };
+
+      toggle.addEventListener("click", toggleComments);
+
+      // Keyboard accessibility
+      toggle.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleComments();
+        }
+      });
+    });
   </script>
 </body>
 </html>
