@@ -1,0 +1,36 @@
+<!-- src/views/users/following.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= user.username %> – Following</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main>
+    <h1><%= user.username %> is following</h1>
+
+    <% if (following.length === 0) { %>
+      <p>Not following anyone yet.</p>
+    <% } %>
+
+    <ul>
+      <% following.forEach(person => { %>
+        <li>
+          <a href="/users/<%= person.id %>">
+            <%= person.username %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+
+    <a href="/users/<%= user.id %>">← Back to profile</a>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

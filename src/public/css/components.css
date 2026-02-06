@@ -1,6 +1,6 @@
 /* src/public/css/components.css */
 
-/* Flash message container */
+/* Flash messages */*/
 .flash {
   padding: 1rem 1.5rem;
   margin: 1rem 0;
@@ -37,7 +37,7 @@
   }
 }
 
-/* Fade-out animation (to be triggered by JS) */
+/* Fade-out animation (triggered by JS) */
 @keyframes fadeOutFlash {
   from {
     opacity: 1;
@@ -53,11 +53,114 @@
   }
 }
 
-/* Make sure flash messages look good on mobile */
-@media (max-width: 768px) {
-  .flash {
-    margin: 0.75rem 0;
-    padding: 0.75rem 1rem;
+/* Profile Page */
+/* Profile header container (stats + follow button) */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Profile stats container */
+.profile-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 1rem;
+  align-items: center;
+}
+
+/* Links for follower/following counts */
+.profile-stats a {
+  text-decoration: none;
+  color: #3182ce; /* blue link color */
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.profile-stats a:hover,
+.profile-stats a:focus {
+  color: #2c5282; /* darker blue on hover/focus */
+  outline: 2px solid #2c5282;
+  outline-offset: 2px;
+}
+
+/* Follow/Unfollow buttons */
+.btn-primary,
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+/* Primary button (Follow) */
+.btn-primary {
+  background-color: #3182ce;
+  color: #ffffff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #2c5282;
+  outline: 2px solid #2c5282;
+  outline-offset: 2px;
+  transform: translateY(-1px);
+}
+
+/* Secondary button (Unfollow) */
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #cbd5e0;
+  outline: 2px solid #718096;
+  outline-offset: 2px;
+  transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+/* Smaller screens adjustments */
+@media (max-width: 1024px) {
+  .profile-header {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .profile-stats {
+    font-size: 0.95rem;
+    gap: 0.75rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
     font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-stats {
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
   }
 }

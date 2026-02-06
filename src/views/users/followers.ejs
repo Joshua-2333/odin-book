@@ -1,0 +1,36 @@
+<!-- src/views/users/followers.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= user.username %> – Followers</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main>
+    <h1>Followers of <%= user.username %></h1>
+
+    <% if (followers.length === 0) { %>
+      <p>No followers yet.</p>
+    <% } %>
+
+    <ul>
+      <% followers.forEach(follower => { %>
+        <li>
+          <a href="/users/<%= follower.id %>">
+            <%= follower.username %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+
+    <a href="/users/<%= user.id %>">← Back to profile</a>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

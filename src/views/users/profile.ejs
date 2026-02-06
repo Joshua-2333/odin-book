@@ -1,0 +1,80 @@
+<!-- src/views/users/profile.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= profileUser.username %> - Profile</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main class="profile-page">
+    <h1><%= profileUser.username %></h1>
+
+    <!-- Flash messages -->
+    <% if (success) { %>
+      <div class="flash flash-success" id="flash-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="flash flash-error" id="flash-error"><%= error %></div>
+    <% } %>
+
+    <!-- Follower / Following stats with links -->
+    <div class="profile-stats">
+      <a href="/users/<%= profileUser.id %>/followers">
+        <strong><%= followersCount %></strong> Followers
+      </a>
+      |
+      <a href="/users/<%= profileUser.id %>/following">
+        <strong><%= followingCount %></strong> Following
+      </a>
+    </div>
+
+    <!-- Follow / Unfollow button (for other users only) -->
+    <% if (!currentUser.guest && !isOwnProfile) { %>
+      <form action="/users/<%= profileUser.id %>/<%= isFollowing ? 'unfollow' : 'follow' %>" method="POST">
+        <button type="submit" class="<%= isFollowing ? 'btn-secondary' : 'btn-primary' %>">
+          <%= isFollowing ? 'Unfollow' : 'Follow' %>
+        </button>
+      </form>
+    <% } %>
+
+    <!-- User posts -->
+    <section class="user-posts">
+      <h2>Posts</h2>
+
+      <% if (posts.length === 0) { %>
+        <p>No posts yet.</p>
+      <% } %>
+
+      <% posts.forEach(post => { %>
+        <article class="post">
+          <p class="post-content"><%= post.content %></p>
+          <div class="post-meta">
+            <span>❤️ <%= post.likes.length %></span>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+
+  <%- include("../partials/footer") %>
+
+  <script>
+    // Auto-hide flash messages after 4 seconds
+    setTimeout(() => {
+      const success = document.getElementById("flash-success");
+      const error = document.getElementById("flash-error");
+
+      [success, error].forEach(el => {
+        if (el) {
+          el.style.animation = "fadeOutFlash 0.8s forwards";
+        }
+      });
+    }, 4000);
+  </script>
+</body>
+</html>

@@ -39,7 +39,13 @@
           <p class="post-content"><%= post.content %></p>
 
           <div class="post-meta">
-            <span>by <strong><%= post.author.username %></strong></span>
+            <!-- Author profile link -->
+            <span>
+              by 
+              <a href="/users/<%= post.author.id %>" class="post-author">
+                <strong><%= post.author.username %></strong>
+              </a>
+            </span>
             <span>❤️ <%= post.likes.length %></span>
           </div>
 
@@ -53,7 +59,11 @@
           <section class="comments">
             <% post.comments.forEach(comment => { %>
               <div class="comment">
-                <strong><%= comment.author.username %>:</strong>
+                <strong>
+                  <a href="/users/<%= comment.author.id %>" class="comment-author">
+                    <%= comment.author.username %>
+                  </a>:
+                </strong>
                 <span><%= comment.content %></span>
               </div>
             <% }) %>
