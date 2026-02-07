@@ -7,6 +7,9 @@ import followController from "../controllers/followController.js";
 
 const router = express.Router();
 
+// NEW: Users index page (auth only)
+router.get("/", ensureAuth, userController.index);
+
 // View user profile (guests allowed)
 router.get("/:id", userController.profile);
 

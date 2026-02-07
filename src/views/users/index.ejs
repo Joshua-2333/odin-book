@@ -1,0 +1,60 @@
+<!-- src/views/users/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Users</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main class="users-page">
+    <h1>All Users</h1>
+
+    <!-- Flash messages -->
+    <% if (success) { %>
+      <div class="flash flash-success" id="flash-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="flash flash-error" id="flash-error"><%= error %></div>
+    <% } %>
+
+    <% if (users.length === 0) { %>
+      <p>No users found.</p>
+    <% } %>
+
+    <section class="user-list">
+      <% users.forEach(user => { %>
+        <div class="user-card">
+          <h2><a href="/users/<%= user.id %>"><%= user.username %></a></h2>
+          
+          <!-- Follow / Unfollow button -->
+          <% if (!currentUser.guest) { %>
+            <form action="/users/<%= user.id %>/<%= user.isFollowing ? 'unfollow' : 'follow' %>" method="POST">
+              <button type="submit" class="<%= user.isFollowing ? 'btn-secondary' : 'btn-primary' %>">
+                <%= user.isFollowing ? 'Unfollow' : 'Follow' %>
+              </button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+    </section>
+  </main>
+
+  <%- include("../partials/footer") %>
+
+  <script>
+    // Auto-hide flash messages
+    setTimeout(() => {
+      const success = document.getElementById("flash-success");
+      const error = document.getElementById("flash-error");
+      [success, error].forEach(el => {
+        if (el) el.style.animation = "fadeOutFlash 0.8s forwards";
+      });
+    }, 4000);
+  </script>
+</body>
+</html>
