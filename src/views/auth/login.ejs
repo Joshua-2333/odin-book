@@ -1,4 +1,5 @@
 <!-- src/views/auth/login.ejs -->
+<% const hideNav = true; %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,48 +10,62 @@
   <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
+
   <%- include("../partials/header") %>
 
   <main class="auth-page">
-    <h1>Login</h1>
+    <div class="auth-card">
+      <h1 class="auth-title">Welcome Back</h1>
 
-    <% if (error) { %>
-      <p class="error"><%= error %></p>
-    <% } %>
+      <% if (error) { %>
+        <div class="flash flash-error"><%= error %></div>
+      <% } %>
 
-    <form action="/login" method="POST" class="auth-form">
-      <label for="identifier">Email or Username</label>
-      <input
-        type="text"
-        name="identifier"
-        id="identifier"
-        required
-        autofocus
-      />
+      <% if (success) { %>
+        <div class="flash flash-success"><%= success %></div>
+      <% } %>
 
-      <label for="password">Password</label>
-      <input
-        type="password"
-        name="password"
-        id="password"
-        required
-      />
+      <form action="/login" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="identifier">Email or Username</label>
+          <input
+            type="text"
+            name="identifier"
+            id="identifier"
+            required
+            autofocus
+          />
+        </div>
 
-      <button type="submit">Login</button>
-    </form>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+          />
+        </div>
 
-    <div class="auth-links">
-      <p>
-        Don’t have an account?
-        <a href="/register">Register here</a>
-      </p>
-      <p>
-        Or continue as a
-        <a href="/guest">Guest</a>
-      </p>
+        <button type="submit" class="btn btn-primary btn-full">
+          Login
+        </button>
+      </form>
+
+      <div class="auth-links">
+        <p>
+          Don’t have an account?
+          <a href="/register">Create one</a>
+        </p>
+        <p>
+          Or continue as a
+          <a href="/guest">Guest</a>
+        </p>
+      </div>
     </div>
   </main>
 
   <%- include("../partials/footer") %>
+
 </body>
 </html>

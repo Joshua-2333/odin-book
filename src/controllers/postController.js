@@ -18,11 +18,28 @@ const postController = {
         orderBy: { createdAt: "desc" },
       });
 
-      res.render("posts/index", { posts });
+      res.render("posts/index", {
+        layout: "layouts/main",
+        title: "Posts",
+        posts,
+        success: req.session.success,
+        error: req.session.error,
+        currentUser: req.user,
+      });
+
+      req.session.success = null;
+      req.session.error = null;
     } catch (err) {
       console.error(err);
-      req.session.error = "Failed to load posts.";
-      res.render("posts/index", { posts: [] });
+
+      res.render("posts/index", {
+        layout: "layouts/main",
+        title: "Posts",
+        posts: [],
+        success: null,
+        error: "Failed to load posts.",
+        currentUser: req.user,
+      });
     }
   },
 
@@ -42,6 +59,7 @@ const postController = {
           authorId: req.user.id,
         },
       });
+
       req.session.success = "Post created successfully!";
     } catch (err) {
       console.error(err);
@@ -62,6 +80,7 @@ const postController = {
           postId,
         },
       });
+
       req.session.success = "You liked the post!";
     } catch (err) {
       req.session.error = "You already liked this post.";

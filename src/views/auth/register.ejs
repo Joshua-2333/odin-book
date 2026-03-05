@@ -1,4 +1,5 @@
 <!-- src/views/auth/register.ejs -->
+<% const hideNav = true; %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,31 +10,67 @@
   <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
+
   <%- include("../partials/header") %>
 
-  <main>
-    <h1>Register</h1>
+  <main class="auth-page">
+    <div class="auth-card">
+      <h1 class="auth-title">Create Account</h1>
 
-    <% if (error) { %>
-      <p class="error"><%= error %></p>
-    <% } %>
+      <% if (error) { %>
+        <div class="flash flash-error"><%= error %></div>
+      <% } %>
 
-    <form action="/register" method="POST">
-      <label for="username">Username:</label>
-      <input type="text" name="username" id="username" required>
+      <% if (success) { %>
+        <div class="flash flash-success"><%= success %></div>
+      <% } %>
 
-      <label for="email">Email:</label>
-      <input type="email" name="email" id="email" required>
+      <form action="/register" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            required
+          />
+        </div>
 
-      <label for="password">Password:</label>
-      <input type="password" name="password" id="password" required>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+          />
+        </div>
 
-      <button type="submit">Register</button>
-    </form>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+          />
+        </div>
 
-    <p>Already have an account? <a href="/login">Login here</a></p>
+        <button type="submit" class="btn btn-primary btn-full">
+          Register
+        </button>
+      </form>
+
+      <div class="auth-links">
+        <p>
+          Already have an account?
+          <a href="/login">Login here</a>
+        </p>
+      </div>
+    </div>
   </main>
 
   <%- include("../partials/footer") %>
+
 </body>
 </html>

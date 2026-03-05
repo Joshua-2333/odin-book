@@ -1,27 +1,41 @@
 <!-- src/views/partials/header.ejs -->
+
+<% if (typeof hideNav === "undefined" || !hideNav) { %>
 <header class="site-header">
   <nav class="nav">
     <a href="/" class="nav-logo">Odin-Book</a>
 
     <div class="nav-links">
-      <% if (currentUser) { %>
+      
+      <% if (currentUser && !currentUser.guest) { %>
+        <!-- Logged In User -->
         <span class="nav-user">
           Welcome,
           <strong><%= currentUser.username %></strong>
-          <% if (currentUser.guest) { %>
-            (Guest)
-          <% } %>
         </span>
 
-        <% if (!currentUser.guest) { %>
-          <a href="/users/<%= currentUser.id %>">Profile</a>
-        <% } %>
-
+        <a href="/posts">Posts</a>
+        <a href="/users">Users</a>
+        <a href="/users/<%= currentUser.id %>">Profile</a>
         <a href="/logout">Logout</a>
+
+      <% } else if (currentUser && currentUser.guest) { %>
+        <!-- Guest User -->
+        <span class="nav-user">
+          Welcome,
+          <strong>Guest</strong> (Guest)
+        </span>
+
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+
       <% } else { %>
+        <!-- Not Logged In -->
         <a href="/login">Login</a>
         <a href="/register">Register</a>
       <% } %>
+
     </div>
   </nav>
 </header>
+<% } %>

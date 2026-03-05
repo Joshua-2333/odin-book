@@ -1,15 +1,14 @@
 /* src/public/css/components.css */
 
-/* Flash messages */
+/* ---------------- Flash messages ---------------- */
 .flash {
   padding: 1rem 1.5rem;
   margin: 1rem 0;
   border-radius: 8px;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 1rem;
   max-width: 600px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(-10px);
   animation: fadeInFlash 0.4s forwards;
@@ -28,80 +27,27 @@
 }
 
 @keyframes fadeInFlash {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeOutFlash {
-  from {
-    opacity: 1;
-    height: auto;
-    margin: 1rem 0;
-    padding: 1rem 1.5rem;
-  }
-  to {
-    opacity: 0;
-    height: 0;
-    margin: 0;
-    padding: 0;
-  }
+  to { opacity: 0; height: 0; margin: 0; padding: 0; }
 }
 
-/* Profile page */
-/* Header container (stats + follow button) */
-.profile-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+/* ---------------- Buttons ---------------- */
+button {
+  cursor: pointer;
+  font-family: inherit;
 }
 
-/* Profile stats container */
-.profile-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 1rem;
-  align-items: center;
-}
-
-/* Links for follower/following counts */
-.profile-stats a {
-  text-decoration: none;
-  color: #3182ce; /* blue link color */
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: color 0.2s;
-}
-
-.profile-stats a svg {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
-}
-
-.profile-stats a:hover,
-.profile-stats a:focus {
-  color: #2c5282;
-  outline: 2px solid #2c5282;
-  outline-offset: 2px;
-}
-
-/* Follow/Unfollow buttons */
 .btn-primary,
 .btn-secondary {
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: 999px;
   border: none;
-  cursor: pointer;
   font-weight: 600;
-  font-size: 0.95rem;
-  transition: background-color 0.2s, color 0.2s, transform 0.1s;
+  font-size: 1rem;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.15s;
 }
 
 .btn-primary {
@@ -110,11 +56,12 @@
 }
 
 .btn-primary:hover,
-.btn-primary:focus {
+.btn-primary:focus-visible {
   background-color: #2c5282;
-  outline: 2px solid #2c5282;
-  outline-offset: 2px;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
 }
 
 .btn-secondary {
@@ -123,140 +70,235 @@
 }
 
 .btn-secondary:hover,
-.btn-secondary:focus {
+.btn-secondary:focus-visible {
   background-color: #cbd5e0;
-  outline: 2px solid #718096;
-  outline-offset: 2px;
   transform: translateY(-1px);
-}
-
-/* Posts on profile page */
-.user-posts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.user-posts .post {
-  background-color: #f7fafc;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.user-posts .post:hover,
-.user-posts .post:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
-
-.user-posts .post .post-meta {
-  display: flex;
-  justify-content: flex-start;
-  gap: 1rem;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-}
-
-.user-posts .post .post-meta span {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: default;
-  transition: color 0.2s;
-}
-
-.user-posts .post .post-meta span:hover,
-.user-posts .post .post-meta span:focus {
-  color: #3182ce;
-  outline: 2px solid #3182ce;
+  outline: 3px solid #a3bffa;
   outline-offset: 2px;
 }
 
-.user-posts .post .post-meta svg {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
+/* ---------------- Posts (feed + profile) ---------------- */
+.post {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-/* Comment icon adjustments */
-.comment-icon svg,
-.comment-toggle svg {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
+.post:hover,
+.post:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
-/* Collapsible comments with smooth slide */
-.comments {
+.post-content {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+  word-wrap: break-word;
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.post-author {
+  text-decoration: none;
+  font-weight: 600;
+  color: #111827;
+}
+
+.post-author:hover,
+.post-author:focus-visible {
+  color: #3182ce;
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* Like / action button inside posts */
+.post form button {
   margin-top: 0.5rem;
-  padding-left: 0.5rem;
-  border-left: 2px solid #e2e8f0;
-  max-height: 0;       /* collapsed by default */
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  color: #374151;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.post form button:hover,
+.post form button:focus-visible {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* ---------------- Comments ---------------- */
+.comments {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid #e5e7eb;
+  max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s ease, padding 0.35s ease;
 }
 
 .comments.open {
-  max-height: 500px;   /* enough to show content */
+  max-height: 600px;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
 
 .comment {
-  padding: 0.25rem 0;
   font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
 }
 
-/* Comment form */
-.comment-form {
-  margin-top: 0.5rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.comment-form input[type="text"] {
-  flex: 1;
-  padding: 0.35rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #cbd5e0;
-}
-
-.comment-form button {
-  padding: 0.35rem 0.75rem;
-  border-radius: 4px;
-  border: none;
-  background-color: #3182ce;
-  color: #fff;
+.comment-author {
+  text-decoration: none;
   font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  color: #111827;
 }
 
-.comment-form button:hover,
-.comment-form button:focus {
-  background-color: #2c5282;
-  outline: 2px solid #2c5282;
+.comment-author:hover,
+.comment-author:focus-visible {
+  color: #3182ce;
+  outline: 3px solid #93c5fd;
   outline-offset: 2px;
 }
 
-/* Responsive adjustments */
+.comment-form {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.comment-form button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: #3182ce;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ---------------- Profile page ---------------- */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.profile-stats a {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #3182ce;
+}
+
+.profile-stats a:hover,
+.profile-stats a:focus-visible {
+  color: #2c5282;
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.profile-stats svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+/* Profile posts grid */
+.user-posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+/* ---------------- Users index ---------------- */
+.user-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.user-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+}
+
+.user-card:hover,
+.user-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.user-card h2 a {
+  text-decoration: none;
+  color: #111827;
+}
+
+.user-card h2 a:hover,
+.user-card h2 a:focus-visible {
+  color: #3182ce;
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* ---------------- Guest notice ---------------- */
+.guest-note {
+  background-color: #fef3c7;
+  color: #92400e;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* ---------------- Responsive ---------------- */
 @media (max-width: 1024px) {
-  .profile-header {
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
-
-  .profile-stats {
-    font-size: 0.95rem;
-    gap: 0.75rem;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    font-size: 0.9rem;
-    padding: 0.45rem 0.9rem;
+  .user-posts,
+  .user-list {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 }
 
@@ -266,18 +308,20 @@
     align-items: flex-start;
   }
 
-  .profile-stats {
-    gap: 0.5rem;
-    font-size: 0.9rem;
-  }
-
   .btn-primary,
   .btn-secondary {
     width: 100%;
     text-align: center;
   }
 
-  .user-posts {
+  .user-posts,
+  .user-list {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }

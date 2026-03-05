@@ -1,0 +1,9 @@
+<!-- src/views/partials/footer.ejs -->
+
+<% if (typeof hideNav === "undefined" || !hideNav) { %>
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; <%= new Date().getFullYear() %> Odin-Book. All rights reserved.</p>
+  </div>
+</footer>
+<% } %>

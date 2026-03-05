@@ -1,0 +1,164 @@
+/* src/public/css/base.css */
+
+:root {
+  /* Colors */
+  --color-primary: #3b82f6;        /* blue */
+  --color-secondary: #6b7280;      /* gray */
+  --color-bg: #f9fafb;             /* light background */
+  --color-card: #ffffff;           /* card background */
+  --color-text: #111827;           /* main text */
+  --color-text-muted: #6b7280;     /* muted text */
+  --color-error: #ef4444;          /* red */
+  --color-success: #22c55e;        /* green */
+
+  /* Font sizes */
+  --font-base: 16px;
+  --font-large: 1.25rem;
+  --font-small: 0.875rem;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-size: var(--font-base);
+  line-height: 1.6;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+p {
+  margin-bottom: var(--space-md);
+}
+
+ul, ol {
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+/* Flash messages */
+.flash {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.flash-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.flash-error {
+  background-color: var(--color-error);
+  color: white;
+}
+
+@keyframes fadeOutFlash {
+  to { opacity: 0; transform: translateY(-10px); display: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* Forms */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+textarea {
+  width: 100%;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid #d1d5db;
+  resize: vertical;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid #d1d5db;
+}
+
+/* Cards */
+.card {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: var(--space-lg);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Utilities */
+.text-center { text-align: center; }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
