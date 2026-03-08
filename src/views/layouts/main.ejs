@@ -1,26 +1,50 @@
+<!-- src/views/layouts/main.ejs -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title><%= title || "Odin Book" %></title>
+
+  <title><%= typeof title !== "undefined" ? title : "Odin Book" %></title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Global styles -->
   <link rel="stylesheet" href="/css/base.css" />
-  <link rel="stylesheet" href="/css/layout.css" />
   <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
   <link rel="stylesheet" href="/css/themes.css" />
 </head>
 <body>
+
+  <!-- Header -->
   <%- include("../partials/header") %>
 
+  <!-- Main content -->
   <main class="app-container">
-    <%- body %>
+    <div class="container">
+
+      <% if (success) { %>
+        <div class="alert alert-success">
+          <%= success %>
+        </div>
+      <% } %>
+
+      <% if (error) { %>
+        <div class="alert alert-error">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <%- body %>
+
+    </div>
   </main>
 
+  <!-- Footer -->
   <%- include("../partials/footer") %>
 
   <script src="/js/main.js" defer></script>
+
 </body>
 </html>

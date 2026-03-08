@@ -77,9 +77,9 @@ button {
   outline-offset: 2px;
 }
 
-/* ---------------- Posts (feed + profile) ---------------- */
+/* ---------------- Post Card ---------------- */
 .post {
-  background-color: #ffffff;
+  background-color: var(--color-card, #ffffff);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
@@ -87,7 +87,6 @@ button {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  width: 100%;
 }
 
 .post:hover,
@@ -126,7 +125,6 @@ button {
   outline-offset: 2px;
 }
 
-/* Like / action button inside posts */
 .post form button {
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
@@ -134,7 +132,6 @@ button {
   border-radius: 6px;
   background-color: #f3f4f6;
   color: #374151;
-  transition: background-color 0.2s, transform 0.15s;
 }
 
 .post form button:hover,
@@ -147,9 +144,6 @@ button {
 
 /* ---------------- Comments ---------------- */
 .comments {
-  margin-top: 1rem;
-  padding-left: 1rem;
-  border-left: 2px solid #e5e7eb;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s ease, padding 0.35s ease;
@@ -181,7 +175,6 @@ button {
 }
 
 .comment-form {
-  margin-top: 0.75rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -202,7 +195,7 @@ button {
   font-weight: 600;
 }
 
-/* ---------------- Profile page ---------------- */
+/* ---------------- Profile Page ---------------- */
 .profile-header {
   display: flex;
   justify-content: space-between;
@@ -240,24 +233,9 @@ button {
   fill: currentColor;
 }
 
-/* Profile posts grid */
-.user-posts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  width: 100%;
-}
-
-/* ---------------- Users index ---------------- */
-.user-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  width: 100%;
-}
-
+/* ---------------- Users Page ---------------- */
 .user-card {
-  background-color: #ffffff;
+  background-color: var(--color-card, #ffffff);
   border-radius: 12px;
   padding: 1.25rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
@@ -283,7 +261,7 @@ button {
   outline-offset: 2px;
 }
 
-/* ---------------- Guest notice ---------------- */
+/* ---------------- Guest Notice ---------------- */
 .guest-note {
   background-color: #fef3c7;
   color: #92400e;
@@ -294,34 +272,9 @@ button {
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* ---------------- Responsive ---------------- */
-@media (max-width: 1024px) {
-  .user-posts,
-  .user-list {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-}
-
+/* ---------------- Mobile Adjustments ---------------- */
 @media (max-width: 768px) {
-  .profile-header {
+  .comment-form {
     flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    text-align: center;
-  }
-
-  .user-posts,
-  .user-list {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
   }
 }

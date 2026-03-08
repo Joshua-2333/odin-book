@@ -4,6 +4,7 @@ import session from "express-session";
 import pgSession from "connect-pg-simple";
 import path from "path";
 import dotenv from "dotenv";
+import expressLayouts from "express-ejs-layouts";
 
 import passport, { guestMiddleware } from "./config/passport.js";
 import sessionConfig from "./config/session.js";
@@ -13,26 +14,30 @@ dotenv.config();
 
 const app = express();
 
-// View engine 
+// View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src/views"));
 
-// Body parsing 
+// Enable layouts
+app.use(expressLayouts);
+app.set("layout", "layouts/main");
+
+// Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Static files 
+// Static files
 app.use(express.static(path.join(process.cwd(), "src/public")));
 
-// Sessions 
+// Sessions
 const PGStore = pgSession(session);
 app.use(session(sessionConfig(PGStore)));
 
-// Passport 
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Guest middleware 
+// Guest middleware
 app.use(guestMiddleware);
 
 // Flash + locals
@@ -46,7 +51,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes 
+// Routes
 app.use("/", routes);
 
 // 404

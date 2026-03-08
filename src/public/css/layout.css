@@ -1,16 +1,18 @@
 /* src/public/css/layout.css */
 
-/* Global Layout */
-
-html,
-body {
+/* ---------------- Global Layout ---------------- */
+html, body {
   height: 100%;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  background-color: var(--color-bg, #f9fafb);
+  color: var(--color-text, #111827);
 }
 
 body {
   display: flex;
   flex-direction: column;
-  line-height: 1.5;
 }
 
 main {
@@ -20,16 +22,14 @@ main {
 
 .container {
   width: 100%;
-  max-width: 72rem; 
+  max-width: 72rem;
   margin-inline: auto;
   padding: clamp(1rem, 3vw, 2rem);
 }
 
-
-/* Header */
-
+/* ---------------- Header ---------------- */
 .site-header {
-  background-color: var(--color-card);
+  background-color: var(--color-card, #ffffff);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -37,9 +37,7 @@ main {
   width: 100%;
   max-width: 72rem;
   margin-inline: auto;
-  padding: clamp(0.75rem, 2vw, 1.25rem)
-           clamp(1rem, 3vw, 2rem);
-
+  padding: clamp(0.75rem, 2vw, 1.25rem) clamp(1rem, 3vw, 2rem);
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -53,13 +51,6 @@ main {
   text-decoration: none;
 }
 
-.nav-logo:focus-visible,
-.nav-links a:focus-visible {
-  outline: 3px solid #4f46e5;
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
 .nav-links {
   display: flex;
   flex-wrap: wrap;
@@ -70,96 +61,53 @@ main {
 .nav-links a {
   font-weight: 500;
   text-decoration: none;
-  min-height: 44px; /* Accessible tap target */
+  min-height: 44px;
   display: flex;
   align-items: center;
-  transition: opacity 0.2s ease;
-}
-
-.nav-links a:hover {
-  opacity: 0.75;
 }
 
 .nav-user {
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-muted, #6b7280);
 }
 
-
-/* Footer */
-
+/* ---------------- Footer ---------------- */
 .site-footer {
   margin-top: clamp(1.5rem, 4vw, 3rem);
   padding: 1.25rem;
   text-align: center;
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-muted, #6b7280);
 }
 
-
-/* Auth Pages (Login / Register) */
+/* ---------------- Auth Pages ---------------- */
 .auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: clamp(1rem, 4vw, 3rem);
-
   background: linear-gradient(
     135deg,
-    rgba(59, 130, 246, 0.05),
-    rgba(99, 102, 241, 0.08)
+    rgba(59,130,246,0.05),
+    rgba(99,102,241,0.08)
   );
 }
 
 .auth-card {
   width: 100%;
-  max-width: 28rem; /* 448px */
-  background-color: var(--color-card);
+  max-width: 28rem;
+  background-color: var(--color-card, #ffffff);
   padding: clamp(1.5rem, 4vw, 2.5rem);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
 }
 
-.auth-title {
-  text-align: center;
-  font-size: clamp(1.5rem, 4vw, 1.75rem);
-  font-weight: 700;
-  margin-bottom: clamp(1.25rem, 3vw, 2rem);
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
+.auth-form,
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-}
-
-.form-group label {
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.form-group input {
-  padding: 0.7rem 0.85rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid #cbd5e1;
-  font-size: 1rem;
-  min-height: 44px;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
-  background-color: #ffffff;
-}
-
-.form-group input:focus-visible {
-  outline: 3px solid #4f46e5;
-  outline-offset: 2px;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
 }
 
 .auth-links {
@@ -168,102 +116,76 @@ main {
   font-size: 0.875rem;
 }
 
-.auth-links a {
-  font-weight: 600;
-  text-decoration: underline;
-}
-
-.auth-links a:focus-visible {
-  outline: 3px solid #4f46e5;
-  outline-offset: 3px;
-}
-
-
-/* Page Titles */
-
+/* ---------------- Page Titles ---------------- */
 .page-title {
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
 
-
-/* Post Feed */
-
+/* ---------------- Post Feed ---------------- */
+/* Social-style centered feed */
 .posts {
+  max-width: 650px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 3vw, 1.5rem);
+  gap: 1.5rem;
 }
 
-.post .post-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  margin-top: 0.5rem;
-}
-
-.post .post-content {
-  margin-bottom: 0.75rem;
-  word-wrap: break-word;
-}
-
+/* ---------------- Comments Layout ---------------- */
 .comments {
   margin-top: 1rem;
   padding-left: 1rem;
   border-left: 2px solid #e5e7eb;
 }
 
-.comment {
-  margin-bottom: 0.75rem;
-}
-
-.comment-form {
-  margin-top: 0.75rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-
-/* Users Page */
-
-.user-list {
+/* ---------------- Users Layout ---------------- */
+.user-list,
+.user-posts {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(min(100%, 14rem), 1fr)
-  );
   gap: clamp(1rem, 3vw, 1.5rem);
 }
 
-.user-card {
-  padding: clamp(1rem, 3vw, 1.5rem);
-  background-color: var(--color-card);
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  text-align: center;
+.user-list {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
 }
 
-.user-card h2 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+.user-posts {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-
-/* Forms Layout */
-
+/* ---------------- Forms Layout ---------------- */
 .post-form textarea {
   min-height: 100px;
   resize: vertical;
 }
 
+/* ---------------- Responsive ---------------- */
+@media (max-width: 1024px) {
+  .user-posts,
+  .user-list {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
 
-/* Reduced Motion Support */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
+  .auth-card {
+    width: 100%;
+  }
+
+  .user-posts,
+  .user-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------- Reduced Motion ---------------- */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
