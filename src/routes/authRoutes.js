@@ -3,21 +3,24 @@ import express from "express";
 import bcrypt from "bcrypt";
 import passport from "../config/passport.js";
 import { PrismaClient } from "@prisma/client";
+import authController from "../controllers/authController.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-// Register 
-router.get("/register", (req, res) => {
-  res.render("auth/register", { error: null });
-});
 
+// Register page
+router.get("/register", authController.registerPage);
+
+
+// Register user
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
     return res.render("auth/register", {
       error: "All fields are required.",
+      layout: false,
     });
   }
 
@@ -34,6 +37,7 @@ router.post("/register", async (req, res) => {
     if (existingUser) {
       return res.render("auth/register", {
         error: "Username or email already taken.",
+        layout: false,
       });
     }
 
@@ -52,25 +56,28 @@ router.post("/register", async (req, res) => {
         console.error(err);
         return res.render("auth/register", {
           error: "Login failed after registration.",
+          layout: false,
         });
       }
+
       res.redirect("/posts");
     });
+
   } catch (err) {
     console.error(err);
     res.render("auth/register", {
       error: "Something went wrong.",
+      layout: false,
     });
   }
 });
 
-// Login 
-router.get("/login", (req, res) => {
-  res.render("auth/login", {
-    error: req.session.error || null,
-  });
-});
 
+// Login page
+router.get("/login", authController.loginPage);
+
+
+// Login user
 router.post(
   "/login",
   (req, res, next) => {
@@ -88,21 +95,25 @@ router.post(
   }
 );
 
-// Logout 
+
+// Logout
 router.get("/logout", (req, res) => {
   req.logout(() => {
     res.redirect("/login");
   });
 });
 
-// Guest 
+
+// Guest login
 router.get("/guest", (req, res) => {
   req.user = {
     id: `guest-${req.sessionID}`,
     username: "Guest",
     guest: true,
   };
+
   res.redirect("/posts");
 });
+
 
 export default router;
