@@ -4,9 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Register - Odin-Book</title>
+
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/layout.css">
   <link rel="stylesheet" href="/css/components.css">
+
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
 
@@ -23,6 +27,7 @@
       <% } %>
 
       <form action="/register" method="POST" class="auth-form">
+
         <div class="form-group">
           <label for="username">Username</label>
           <input
@@ -45,17 +50,28 @@
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            required
-          />
+
+          <div class="password-input-wrapper">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              required
+            />
+
+            <span
+              class="material-symbols-outlined password-toggle"
+              onclick="togglePassword('password', this)"
+            >
+              visibility
+            </span>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-full">
           Register
         </button>
+
       </form>
 
       <div class="auth-links">
@@ -68,6 +84,20 @@
   </main>
 
   <%- include("../partials/footer") %>
+
+  <script>
+    function togglePassword(inputId, icon) {
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "visibility_off";
+      } else {
+        input.type = "password";
+        icon.textContent = "visibility";
+      }
+    }
+  </script>
 
 </body>
 </html>

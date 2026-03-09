@@ -77,6 +77,54 @@ button {
   outline-offset: 2px;
 }
 
+/* ---------------- Password Visibility Toggle ---------------- */
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding: 0.6rem 2.6rem 0.6rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+}
+
+/* Accessible focus state */
+.password-input-wrapper input:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* visibility icon */
+.password-toggle {
+  position: absolute;
+  right: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  user-select: none;
+  font-size: 1.4rem;
+  padding: 0.2rem;
+  border-radius: 4px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+/* hover + keyboard focus */
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  color: #111827;
+  background-color: rgba(0,0,0,0.05);
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
 /* ---------------- Post Card ---------------- */
 .post {
   background-color: var(--color-card, #ffffff);
@@ -274,7 +322,13 @@ button {
 
 /* ---------------- Mobile Adjustments ---------------- */
 @media (max-width: 768px) {
+
   .comment-form {
     flex-direction: column;
   }
+
+  .password-toggle {
+    font-size: 1.3rem;
+  }
+
 }
