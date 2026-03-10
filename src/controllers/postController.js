@@ -1,4 +1,5 @@
 // src/controllers/postController.js
+
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -29,6 +30,7 @@ const postController = {
 
       req.session.success = null;
       req.session.error = null;
+
     } catch (err) {
       console.error(err);
 
@@ -47,20 +49,41 @@ const postController = {
   async create(req, res) {
     const { content } = req.body;
 
-    if (!content?.trim()) {
-      req.session.error = "Post cannot be empty.";
+    let mediaUrl = null;
+    let mediaType = null;
+
+    if (!content?.trim() && !req.file) {
+      req.session.error = "Post must contain text or media.";
       return res.redirect("/posts");
     }
 
     try {
+      if (req.file) {
+        mediaUrl = "/uploads/" + req.file.filename;
+
+        if (req.file.mimetype.startsWith("image")) {
+          mediaType =
+            req.file.mimetype === "image/gif"
+              ? "GIF"
+              : "IMAGE";
+        }
+
+        if (req.file.mimetype.startsWith("video")) {
+          mediaType = "VIDEO";
+        }
+      }
+
       await prisma.post.create({
         data: {
           content,
+          mediaUrl,
+          mediaType,
           authorId: req.user.id,
         },
       });
 
       req.session.success = "Post created successfully!";
+
     } catch (err) {
       console.error(err);
       req.session.error = "Failed to create post. Try again.";

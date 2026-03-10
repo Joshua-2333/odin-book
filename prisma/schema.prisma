@@ -1,4 +1,5 @@
 // prisma/schema.prisma
+
 generator client {
     provider = "prisma-client-js"
 }
@@ -11,6 +12,12 @@ datasource db {
 enum FollowStatus {
     PENDING
     ACCEPTED
+}
+
+enum MediaType {
+    IMAGE
+    GIF
+    VIDEO
 }
 
 model User {
@@ -36,6 +43,10 @@ model User {
 model Post {
     id      Int    @id @default(autoincrement())
     content String @db.Text
+
+    // Media support (images, gifs, videos)
+    mediaUrl  String?
+    mediaType MediaType?
 
     author   User @relation(fields: [authorId], references: [id])
     authorId Int

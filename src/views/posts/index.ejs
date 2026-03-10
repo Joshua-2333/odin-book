@@ -15,10 +15,35 @@
   </div>
 <% } %>
 
-<!-- Post Form -->
+<!-- Create Post -->
 <% if (!currentUser.guest) { %>
-  <form action="/posts" method="POST" class="post-form">
-    <textarea name="content" placeholder="What's on your mind?" required></textarea>
+  <form
+    action="/posts"
+    method="POST"
+    enctype="multipart/form-data"
+    class="post-form"
+  >
+    <textarea
+      name="content"
+      placeholder="What's on your mind?"
+    ></textarea>
+
+    <!-- Media Upload -->
+    <div class="media-upload">
+      <label for="media" class="media-label">
+        📷 Add Image / GIF / Video
+      </label>
+      <input
+        type="file"
+        id="media"
+        name="media"
+        accept="image/*,video/mp4,video/webm"
+      />
+    </div>
+
+    <!-- Preview -->
+    <div id="media-preview"></div>
+
     <button type="submit" class="btn-primary">Post</button>
   </form>
 <% } else { %>
@@ -33,3 +58,30 @@
     <%- include('./post.ejs', { post, currentUser }) %>
   <% }) %>
 </section>
+
+<!-- Media Preview Script -->
+<script>
+const input = document.getElementById("media");
+const preview = document.getElementById("media-preview");
+
+if (input) {
+  input.addEventListener("change", () => {
+    preview.innerHTML = "";
+    const file = input.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    if (file.type.startsWith("video")) {
+      const video = document.createElement("video");
+      video.src = url;
+      video.controls = true;
+      preview.appendChild(video);
+    } else {
+      const img = document.createElement("img");
+      img.src = url;
+      preview.appendChild(img);
+    }
+  });
+}
+</script>

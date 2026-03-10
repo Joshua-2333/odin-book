@@ -1,9 +1,11 @@
 // src/routes/postRoutes.js
+
 import express from "express";
 import ensureAuth from "../middleware/ensureAuth.js";
 import ensureGuest from "../middleware/ensureGuest.js";
 import postController from "../controllers/postController.js";
 import commentController from "../controllers/commentController.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
@@ -11,12 +13,28 @@ const router = express.Router();
 router.get("/", postController.index);
 
 // Create a post (auth users only)
-router.post("/", ensureGuest, ensureAuth, postController.create);
+router.post(
+  "/",
+  ensureGuest,
+  ensureAuth,
+  upload.single("media"),
+  postController.create
+);
 
-// Like a post (auth users only)
-router.post("/:id/like", ensureGuest, ensureAuth, postController.like);
+// Like a post
+router.post(
+  "/:id/like",
+  ensureGuest,
+  ensureAuth,
+  postController.like
+);
 
-// Add a comment (auth users only)
-router.post("/:id/comments", ensureGuest, ensureAuth, commentController.create);
+// Add a comment
+router.post(
+  "/:id/comments",
+  ensureGuest,
+  ensureAuth,
+  commentController.create
+);
 
 export default router;
