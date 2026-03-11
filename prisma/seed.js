@@ -12,14 +12,13 @@ const SEED_PASSWORD = "Hunter_2333";
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Clear existing data (order matters)
+  // Clear existing data
   await prisma.like.deleteMany();
   await prisma.comment.deleteMany();
   await prisma.follow.deleteMany();
   await prisma.post.deleteMany();
   await prisma.user.deleteMany();
 
-  // Hash shared password
   const passwordHash = await bcrypt.hash(SEED_PASSWORD, 10);
 
   // ---- USERS ----
@@ -30,7 +29,7 @@ async function main() {
       data: {
         username: faker.internet.username(),
         email: faker.internet.email(),
-        passwordHash, // ✅ correct field
+        passwordHash,
       },
     });
 
@@ -54,6 +53,45 @@ async function main() {
 
       posts.push(post);
     }
+  }
+
+  // ---- SPECIAL MEDIA POSTS ----
+
+  const mediaPosts = [
+    {
+      content:
+        "Just started reading Gachiakuta and the art style is absolutely insane.",
+      mediaUrl: "/images/Gachiakuta.jpg",
+    },
+    {
+      content:
+        "When your code finally works after hours of debugging. Mic drop moment.",
+      mediaUrl: "/images/mic-drop.gif",
+    },
+    {
+      content:
+        "Me realizing the bug was one missing bracket the whole time.",
+      mediaUrl: "/images/spongebob.gif",
+    },
+    {
+      content:
+        "Wish I knew this before completing the game, this would have made the game a bit more easy for me.",
+      mediaUrl: "https://www.youtube.com/embed/zxL-2f15LG0",
+    },
+  ];
+
+  for (const mediaPost of mediaPosts) {
+    const randomUser = faker.helpers.arrayElement(users);
+
+    const post = await prisma.post.create({
+      data: {
+        content: mediaPost.content,
+        mediaUrl: mediaPost.mediaUrl,
+        authorId: randomUser.id,
+      },
+    });
+
+    posts.push(post);
   }
 
   console.log(`✅ Created ${posts.length} posts`);
@@ -92,9 +130,7 @@ async function main() {
             postId: post.id,
           },
         });
-      } catch {
-        // Ignore duplicate likes
-      }
+      } catch {}
     }
   }
 
@@ -119,9 +155,7 @@ async function main() {
             status: "ACCEPTED",
           },
         });
-      } catch {
-        // Ignore duplicates
-      }
+      } catch {}
     }
   }
 

@@ -126,7 +126,7 @@ main {
 /* ---------------- Post Feed ---------------- */
 /* Social-style centered feed */
 .posts {
-  max-width: 650px;
+  max-width: 680px; /* updated width */
   margin: 0 auto;
   display: flex;
   flex-direction: column;
