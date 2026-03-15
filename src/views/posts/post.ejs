@@ -2,6 +2,21 @@
 
 <article class="post">
 
+  <!-- Post Header -->
+  <div class="post-header">
+
+    <img
+      src="<%= post.author.avatar || '/avatars/default.png' %>"
+      class="avatar"
+    >
+
+    <a href="/users/<%= post.author.id %>" class="post-author">
+      <strong><%= post.author.username %></strong>
+    </a>
+
+  </div>
+
+
   <!-- Post Content -->
   <div class="post-content">
 
@@ -40,60 +55,77 @@
 
   </div>
 
+
   <!-- Post Meta -->
   <div class="post-meta">
-    <span>
-      by
-      <a href="/users/<%= post.author.id %>" class="post-author">
-        <strong><%= post.author.username %></strong>
-      </a>
-    </span>
 
-    <span class="post-likes" aria-label="<%= post.likes.length %> likes">
+    <span class="post-likes">
       ❤️ <%= post.likes.length %>
     </span>
+
   </div>
+
 
   <!-- Post Actions -->
   <% if (!currentUser.guest) { %>
+
     <div class="post-actions">
+
       <form action="/posts/<%= post.id %>/like" method="POST">
         <button type="submit" class="btn-secondary">Like</button>
       </form>
+
     </div>
+
   <% } %>
+
 
   <!-- Comments -->
   <section class="comments">
 
     <% if (post.comments && post.comments.length) { %>
+
       <% post.comments.forEach(comment => { %>
 
         <div class="comment">
+
+          <img
+            src="<%= comment.author.avatar || '/avatars/default.png' %>"
+            class="avatar-small"
+          >
+
           <strong>
             <a href="/users/<%= comment.author.id %>" class="comment-author">
               <%= comment.author.username %>
-            </a>:
+            </a>
           </strong>
 
           <span><%= comment.content %></span>
+
         </div>
 
       <% }) %>
+
     <% } %>
 
+
     <% if (!currentUser.guest) { %>
+
       <form action="/posts/<%= post.id %>/comments" method="POST" class="comment-form">
+
         <input
           type="text"
           name="content"
           placeholder="Add a comment..."
           required
         />
+
         <button type="submit" class="btn-secondary">
           Comment
         </button>
+
       </form>
+
     <% } %>
 
   </section>

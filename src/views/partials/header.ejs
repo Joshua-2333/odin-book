@@ -3,12 +3,14 @@
 <% if (typeof hideNav === "undefined" || !hideNav) { %>
 <header class="site-header">
   <nav class="nav">
+
     <a href="/" class="nav-logo">Odin-Book</a>
 
     <div class="nav-links">
-      
+
       <% if (currentUser && !currentUser.guest) { %>
-        <!-- Logged In User -->
+
+        <!-- Logged In -->
         <span class="nav-user">
           Welcome,
           <strong><%= currentUser.username %></strong>
@@ -20,7 +22,8 @@
         <a href="/logout">Logout</a>
 
       <% } else if (currentUser && currentUser.guest) { %>
-        <!-- Guest User -->
+
+        <!-- Guest -->
         <span class="nav-user">
           Welcome,
           <strong>Guest</strong> (Guest)
@@ -30,12 +33,20 @@
         <a href="/register">Register</a>
 
       <% } else { %>
-        <!-- Not Logged In -->
+
+        <!-- Not logged in -->
         <a href="/login">Login</a>
         <a href="/register">Register</a>
+
       <% } %>
 
+      <!-- 🌙 Theme Toggle -->
+      <button id="theme-toggle" class="theme-toggle">
+        🌙
+      </button>
+
     </div>
+
   </nav>
 </header>
 <% } %>

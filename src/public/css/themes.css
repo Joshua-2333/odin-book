@@ -1,0 +1,215 @@
+/* =========================================================
+   Odin Book Theme System
+   src/public/css/themes.css
+   ========================================================= */
+
+/* LIGHT MODE (Default) */
+:root {
+  /* Backgrounds */
+  --color-bg: #f9fafb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f3f4f6;
+
+  /* Text */
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+
+  /* Borders */
+  --color-border: #e5e7eb;
+
+  /* Primary Brand */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+
+  /* Links */
+  --color-link: #2563eb;
+  --color-link-hover: #1d4ed8;
+
+  /* Inputs */
+  --color-input-bg: #ffffff;
+  --color-input-border: #d1d5db;
+  --color-input-focus: #2563eb;
+
+  /* Cards */
+  --color-card: #ffffff;
+
+  /* Alerts */
+  --color-success-bg: #ecfdf5;
+  --color-success-text: #065f46;
+
+  --color-error-bg: #fef2f2;
+  --color-error-text: #991b1b;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* DARK MODE */
+body.dark-mode {
+  /* Backgrounds */
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-alt: #111827;
+
+  /* Text */
+  --color-text: #e5e7eb;
+  --color-text-muted: #94a3b8;
+
+  /* Borders */
+  --color-border: #334155;
+
+  /* Primary Brand */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #60a5fa;
+
+  /* Links */
+  --color-link: #60a5fa;
+  --color-link-hover: #93c5fd;
+
+  /* Inputs */
+  --color-input-bg: #1e293b;
+  --color-input-border: #475569;
+  --color-input-focus: #60a5fa;
+
+  /* Cards */
+  --color-card: #1e293b;
+
+  /* Alerts */
+  --color-success-bg: #022c22;
+  --color-success-text: #6ee7b7;
+
+  --color-error-bg: #3f1d1d;
+  --color-error-text: #fca5a5;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 6px 12px rgba(0,0,0,0.5);
+}
+
+/* =========================================================
+   GLOBAL APPLICATION
+   ========================================================= */
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color .25s ease, color .25s ease;
+}
+
+/* Containers, posts, cards, user grid */
+.app-container,
+.container,
+.posts,
+.post,
+.user-card,
+.profile-avatar,
+.card,
+.surface,
+.user-list,
+.profile-stats {
+  background: var(--color-card);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+/* User card specifics */
+.user-card h2,
+.user-card h2 a,
+.user-card p {
+  color: var(--color-text);
+  transition: color .25s ease;
+}
+.user-card h2 a:hover {
+  color: var(--color-link-hover);
+}
+
+/* Text inside posts, comments, meta */
+.post-content,
+.post-meta,
+.comment,
+.comment span,
+.comment-author,
+.post-author,
+.profile-stats a {
+  color: var(--color-text);
+}
+
+/* Muted text */
+.post-meta,
+.comment span,
+.user-card p {
+  color: var(--color-text-muted);
+}
+
+/* Links */
+a,
+.post-author,
+.comment-author,
+.profile-stats a {
+  color: var(--color-link);
+}
+a:hover,
+.post-author:hover,
+.comment-author:hover,
+.profile-stats a:hover {
+  color: var(--color-link-hover);
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-input-border);
+  padding: .5rem .75rem;
+  border-radius: 6px;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .25s ease, color .25s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 2px rgba(59,130,246,.25);
+}
+
+/* Alerts */
+.alert {
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.alert-error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+/* =========================================================
+   RESPONSIVE TOUCH IMPROVEMENTS
+   ========================================================= */
+@media (max-width:768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION ACCESSIBILITY
+   ========================================================= */
+@media (prefers-reduced-motion:reduce) {
+  * {
+    transition: none !important;
+  }
+}

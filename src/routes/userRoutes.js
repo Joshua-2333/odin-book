@@ -7,20 +7,25 @@ import followController from "../controllers/followController.js";
 
 const router = express.Router();
 
-// NEW: Users index page (auth only)
+// Users index
 router.get("/", ensureAuth, userController.index);
 
-// View user profile (guests allowed)
+// User profile
 router.get("/:id", userController.profile);
 
-// Followers / Following lists
+// Upload avatar
+router.post(
+  "/profile/avatar",
+  ensureAuth,
+  userController.updateAvatar
+);
+
+// Followers / Following
 router.get("/:id/followers", userController.followers);
 router.get("/:id/following", userController.following);
 
-// Follow a user (auth only)
+// Follow / Unfollow
 router.post("/:id/follow", ensureGuest, ensureAuth, followController.follow);
-
-// Unfollow a user (auth only)
 router.post("/:id/unfollow", ensureGuest, ensureAuth, followController.unfollow);
 
 export default router;

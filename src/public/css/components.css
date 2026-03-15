@@ -1,51 +1,59 @@
 /* src/public/css/components.css */
 
 /* ---------------- Flash messages ---------------- */
-.flash {
-  padding: 1rem 1.5rem;
-  margin: 1rem 0;
-  border-radius: 10px;
-  font-weight: 500;
-  font-size: 0.95rem;
-  max-width: 650px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  opacity: 0;
-  transform: translateY(-10px);
-  animation: fadeInFlash 0.4s forwards;
+
+.flash{
+  padding:1rem 1.5rem;
+  margin:1rem 0;
+  border-radius:10px;
+  font-weight:500;
+  font-size:0.95rem;
+  max-width:650px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  opacity:0;
+  transform:translateY(-10px);
+  animation:fadeInFlash .4s forwards;
 }
 
-.flash-success {
-  background: linear-gradient(135deg,#e6ffed,#d1fae5);
-  color: #065f46;
+.flash-success{
+  background:linear-gradient(135deg,#e6ffed,#d1fae5);
+  color:#065f46;
 }
 
-.flash-error {
-  background: linear-gradient(135deg,#ffe6e6,#fecaca);
-  color: #7f1d1d;
+.flash-error{
+  background:linear-gradient(135deg,#ffe6e6,#fecaca);
+  color:#7f1d1d;
 }
 
-@keyframes fadeInFlash {
-  to { opacity:1; transform:translateY(0); }
+@keyframes fadeInFlash{
+  to{opacity:1;transform:translateY(0)}
 }
 
-@keyframes fadeOutFlash {
-  to { opacity:0; height:0; margin:0; padding:0; }
+@keyframes fadeOutFlash{
+  to{opacity:0;height:0;margin:0;padding:0}
 }
 
 /* ---------------- Buttons ---------------- */
 
-button {
+button{
   cursor:pointer;
   font-family:inherit;
 }
 
+button:focus-visible,
+a:focus-visible,
+input:focus-visible{
+  outline:3px solid #2563eb;
+  outline-offset:2px;
+}
+
 .btn-primary,
-.btn-secondary {
-  padding:0.45rem 0.95rem;
+.btn-secondary{
+  padding:.45rem .95rem;
   border-radius:999px;
   border:none;
   font-weight:600;
-  font-size:0.9rem;
+  font-size:.9rem;
   transition:all .2s ease;
 }
 
@@ -76,21 +84,80 @@ button {
   position:relative;
   display:flex;
   align-items:center;
+  width:100%;
 }
 
 .password-input-wrapper input{
   width:100%;
-  padding:0.6rem 2.6rem 0.6rem 0.6rem;
+  padding:.6rem 2.6rem .6rem .6rem;
   border-radius:6px;
   border:1px solid #d1d5db;
+  font-size:.95rem;
 }
 
 .password-toggle{
   position:absolute;
-  right:.6rem;
+  right:.65rem;
+  background:none;
+  border:none;
   cursor:pointer;
-  font-size:1.4rem;
+  font-size:1.2rem;
   color:#6b7280;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:.2rem;
+}
+
+.password-toggle:hover{
+  color:#111827;
+}
+
+.password-toggle:focus-visible{
+  outline:2px solid #2563eb;
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+/* ---------------- Avatar Styles ---------------- */
+
+.avatar,
+.avatar-small,
+.avatar-large{
+  border-radius:50%;
+  object-fit:cover;
+  background:#e5e7eb;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+}
+
+.avatar-small{
+  width:28px;
+  height:28px;
+}
+
+.avatar-large{
+  width:110px;
+  height:110px;
+}
+
+/* avatar containers */
+
+.profile-avatar{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.6rem;
+  margin-bottom:1rem;
+}
+
+.profile-avatar form{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
 }
 
 /* ---------------- Post Feed Layout ---------------- */
@@ -120,16 +187,24 @@ button {
   box-shadow:0 14px 36px rgba(0,0,0,0.12);
 }
 
+/* ---------------- Post Header ---------------- */
+
+.post-header{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  flex-wrap:wrap;
+}
+
 /* ---------------- Post Content ---------------- */
 
 .post-content{
-  font-size:0.96rem;
+  font-size:.96rem;
   line-height:1.6;
   color:#1f2937;
   word-wrap:break-word;
 }
 
-/* text spacing */
 .post-content p{
   margin-bottom:.6rem;
 }
@@ -145,10 +220,8 @@ button {
   margin-top:.5rem;
   object-fit:cover;
   box-shadow:0 6px 18px rgba(0,0,0,0.08);
-  transition:transform .25s ease, box-shadow .25s ease;
+  transition:transform .25s ease,box-shadow .25s ease;
 }
-
-/* media hover effect */
 
 .post-content img:hover,
 .post-content video:hover,
@@ -156,14 +229,6 @@ button {
   transform:scale(1.01);
   box-shadow:0 12px 28px rgba(0,0,0,0.15);
 }
-
-/* ensure gifs behave same as images */
-
-.post-content img[src$=".gif"]{
-  image-rendering:auto;
-}
-
-/* ---------------- Responsive YouTube Embed ---------------- */
 
 .post-content iframe{
   aspect-ratio:16/9;
@@ -179,6 +244,8 @@ button {
   font-size:.85rem;
   color:#6b7280;
   margin-top:.25rem;
+  flex-wrap:wrap;
+  gap:.5rem;
 }
 
 .post-author{
@@ -234,8 +301,6 @@ button {
   cursor:pointer;
 }
 
-/* preview area */
-
 #media-preview{
   display:flex;
   flex-direction:column;
@@ -257,7 +322,7 @@ button {
 }
 
 .comments.open{
-  max-height:600px;
+  max-height:650px;
   padding-top:.3rem;
 }
 
@@ -265,8 +330,15 @@ button {
 
 .comment{
   font-size:.85rem;
-  margin-bottom:.4rem;
+  margin-bottom:.5rem;
   color:#374151;
+  display:flex;
+  align-items:flex-start;
+  gap:.45rem;
+}
+
+.comment span{
+  line-height:1.45;
 }
 
 .comment-author{
@@ -374,12 +446,26 @@ button {
   font-size:.9rem;
 }
 
-/* ---------------- Mobile ---------------- */
+/* ---------------- Tablet ---------------- */
 
 @media (max-width:768px){
 
   .post{
     padding:1.1rem;
+  }
+
+  .post-header{
+    gap:.5rem;
+  }
+
+  .avatar{
+    width:38px;
+    height:38px;
+  }
+
+  .avatar-large{
+    width:90px;
+    height:90px;
   }
 
   .comment-form{
@@ -388,10 +474,35 @@ button {
 
 }
 
+/* ---------------- Mobile ---------------- */
+
 @media (max-width:480px){
+
+  .avatar{
+    width:34px;
+    height:34px;
+  }
+
+  .avatar-small{
+    width:24px;
+    height:24px;
+  }
+
+  .avatar-large{
+    width:80px;
+    height:80px;
+  }
 
   .user-list{
     grid-template-columns:1fr;
+  }
+
+  .post{
+    padding:1rem;
+  }
+
+  .post-meta{
+    font-size:.8rem;
   }
 
 }

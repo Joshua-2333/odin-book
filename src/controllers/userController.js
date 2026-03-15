@@ -1,5 +1,7 @@
 // src/controllers/userController.js
 import { PrismaClient } from "@prisma/client";
+import uploadAvatar from "../middleware/uploadAvatar.js";
+
 const prisma = new PrismaClient();
 
 const userController = {
@@ -22,10 +24,10 @@ const userController = {
         orderBy: { username: "asc" },
       });
 
-      const usersWithFollowStatus = users.map(user => ({
+      const usersWithFollowStatus = users.map((user) => ({
         ...user,
         isFollowing: user.followers.some(
-          follow => follow.followerId === currentUserId
+          (follow) => follow.followerId === currentUserId
         ),
       }));
 
@@ -40,7 +42,9 @@ const userController = {
       req.session.error = null;
     } catch (err) {
       console.error(err);
+
       req.session.error = "Failed to load users.";
+
       res.render("users/index", {
         users: [],
         currentUser: req.user,
@@ -137,7 +141,7 @@ const userController = {
 
     res.render("users/followers", {
       profileUser,
-      followers: profileUser.followers.map(f => f.follower),
+      followers: profileUser.followers.map((f) => f.follower),
       currentUser: req.user,
     });
   },
@@ -165,10 +169,39 @@ const userController = {
 
     res.render("users/following", {
       profileUser,
-      following: profileUser.following.map(f => f.following),
+      following: profileUser.following.map((f) => f.following),
       currentUser: req.user,
     });
   },
+
+  // POST /users/profile/avatar
+  updateAvatar: [
+    uploadAvatar.single("avatar"),
+
+    async (req, res) => {
+      try {
+        if (!req.file) {
+          req.session.error = "No file uploaded.";
+          return res.redirect(`/users/${req.user.id}`);
+        }
+
+        const avatarPath = `/avatars/${req.file.filename}`;
+
+        await prisma.user.update({
+          where: { id: req.user.id },
+          data: { avatar: avatarPath },
+        });
+
+        req.session.success = "Avatar updated!";
+        res.redirect(`/users/${req.user.id}`);
+      } catch (err) {
+        console.error(err);
+
+        req.session.error = "Failed to update avatar.";
+        res.redirect(`/users/${req.user.id}`);
+      }
+    },
+  ],
 };
 
 export default userController;

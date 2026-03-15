@@ -26,8 +26,10 @@ model User {
     email        String @unique
     passwordHash String
 
-    profileImage String? // URL or gravatar
-    bio          String? @db.Text
+    // Avatar / profile image
+    profileImage String @default("/avatars/default.png")
+
+    bio String? @db.Text
 
     posts    Post[]
     comments Comment[]
