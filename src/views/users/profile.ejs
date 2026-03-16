@@ -71,10 +71,7 @@
 
         <!-- Post header -->
         <div class="post-header">
-          <% 
-            // Use post.author if it exists, otherwise fallback to profileUser
-            const author = post.author || profileUser; 
-          %>
+          <% const author = post.author || profileUser; %>
           <img 
             src="<%= author.avatar || '/avatars/default.png' %>" 
             class="avatar" 
@@ -86,19 +83,23 @@
         </div>
 
         <!-- Post text -->
-        <p class="post-content"><%= post.content %></p>
+        <% if (post.content) { %>
+          <p class="post-content"><%= post.content %></p>
+        <% } %>
 
         <!-- Post media -->
         <% if (post.mediaUrl) { %>
-          <% if (post.mediaType === 'VIDEO') { %>
-            <video controls class="post-media">
-              <source src="<%= post.mediaUrl %>" type="video/<%= post.mediaUrl.split('.').pop() %>">
-              Your browser does not support the video tag.
-            </video>
-          <% } else if (post.mediaType === 'GIF') { %>
-            <img src="<%= post.mediaUrl %>" class="post-media" alt="Post GIF">
+          <% const ext = post.mediaUrl.split('.').pop().toLowerCase(); %>
+
+          <% if (["mp4","webm"].includes(ext) || post.mediaType === 'VIDEO') { %>
+            <div class="video-wrapper" style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 12px; margin-top: 0.5rem;">
+              <video controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                <source src="<%= post.mediaUrl %>" type="video/<%= ext %>">
+                Your browser does not support the video tag.
+              </video>
+            </div>
           <% } else { %>
-            <img src="<%= post.mediaUrl %>" class="post-media" alt="Post image">
+            <img src="<%= post.mediaUrl %>" class="post-media" alt="Post media" style="width: 100%; border-radius: 12px; object-fit: cover; display: block; margin-top: 0.5rem;">
           <% } %>
         <% } %>
 

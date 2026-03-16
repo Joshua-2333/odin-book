@@ -1,7 +1,6 @@
 /* src/public/css/components.css */
 
 /* ---------------- Flash messages ---------------- */
-
 .flash {
   padding: 1rem 1.5rem;
   margin: 1rem 0;
@@ -34,10 +33,10 @@
 }
 
 /* ---------------- Buttons ---------------- */
-
 button {
   cursor: pointer;
   font-family: inherit;
+  transition: all .2s ease;
 }
 
 button:focus-visible,
@@ -55,7 +54,6 @@ textarea:focus-visible {
   border: none;
   font-weight: 600;
   font-size: .9rem;
-  transition: all .2s ease;
 }
 
 .btn-primary {
@@ -82,7 +80,6 @@ textarea:focus-visible {
 }
 
 /* ---------------- Password Toggle ---------------- */
-
 .password-input-wrapper {
   position: relative;
   display: flex;
@@ -123,7 +120,6 @@ textarea:focus-visible {
 }
 
 /* ---------------- Avatar Styles ---------------- */
-
 .avatar,
 .avatar-small,
 .avatar-large {
@@ -136,24 +132,23 @@ textarea:focus-visible {
 .avatar-small { width: 28px; height: 28px; }
 .avatar-large { width: 110px; height: 110px; }
 
-/* avatar containers */
-
 .profile-avatar {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: .6rem;
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .profile-avatar form {
   display: flex;
   flex-direction: column;
   gap: .4rem;
+  width: 100%;
 }
 
 /* ---------------- Post Feed Layout ---------------- */
-
 .posts {
   display: flex;
   flex-direction: column;
@@ -161,7 +156,6 @@ textarea:focus-visible {
 }
 
 /* ---------------- Post Card ---------------- */
-
 .post {
   background: var(--color-card,#ffffff);
   border-radius: 16px;
@@ -172,6 +166,7 @@ textarea:focus-visible {
   flex-direction: column;
   gap: .75rem;
   border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
 }
 
 .post:hover,
@@ -181,7 +176,6 @@ textarea:focus-visible {
 }
 
 /* ---------------- Post Header ---------------- */
-
 .post-header {
   display: flex;
   align-items: center;
@@ -190,30 +184,35 @@ textarea:focus-visible {
 }
 
 /* ---------------- Post Content ---------------- */
-
 .post-content {
   font-size: .96rem;
   line-height: 1.6;
   color: #1f2937;
   word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
 }
 
 .post-content p {
   margin-bottom: .6rem;
+  text-align: center;
 }
 
 /* ---------------- Media Inside Posts ---------------- */
-
 .post-content img,
 .post-content video,
 .post-content iframe {
   width: 100%;
   max-width: 100%;
+  max-height: 500px;
   border-radius: 12px;
   margin-top: .5rem;
-  object-fit: cover;
+  object-fit: contain;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   transition: transform .25s ease, box-shadow .25s ease;
+  display: block;
 }
 
 .post-content img:hover,
@@ -226,10 +225,32 @@ textarea:focus-visible {
 .post-content iframe {
   aspect-ratio: 16/9;
   border: none;
+  max-height: 450px;
+}
+
+/* ---------------- Responsive Video Wrapper ---------------- */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 ratio */
+  height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: .5rem;
+}
+
+.video-wrapper iframe,
+.video-wrapper video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* ensures no clipping */
+  border-radius: 12px;
 }
 
 /* ---------------- Post Meta ---------------- */
-
 .post-meta {
   display: flex;
   justify-content: space-between;
@@ -251,20 +272,69 @@ textarea:focus-visible {
   color: #3182ce;
 }
 
-.post-likes {
+/* Like button */
+.like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: .95rem;
   font-weight: 600;
+  color: #6b7280;
   display: flex;
   align-items: center;
   gap: .25rem;
-  transition: transform .15s ease;
+  transition: transform .15s ease, color .15s ease;
 }
 
-.post-likes:hover {
+/* Hover animation */
+.like-btn:hover {
   transform: scale(1.1);
 }
 
-/* ---------------- Comment Toggle Fix & UX Improvements ---------------- */
+/* When post is liked */
+.like-btn[aria-pressed="true"] {
+  color: #ef4444;
+}
 
+/* Like counter */
+.post-likes {
+  font-weight: 600;
+}
+
+/* ---------------- Post Actions ---------------- */
+.post-actions {
+  margin-top: .5rem;
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.post-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .9rem;
+  padding: .35rem .75rem;
+  border-radius: 6px;
+  border: none;
+  background: #3182ce;
+  color: white;
+  font-weight: 600;
+  transition: background .2s ease, transform .2s ease;
+  cursor: pointer;
+}
+
+.post-actions button:hover,
+.post-actions button:focus {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.post-actions button.like-btn.liked {
+  background: #e53e3e;
+}
+
+/* ---------------- Comment Toggle & UX ---------------- */
 .comment-toggle {
   cursor: pointer;
   color: #2563eb;
@@ -289,7 +359,6 @@ textarea:focus-visible {
 }
 
 /* ---------------- Comments ---------------- */
-
 .comments {
   max-height: 0;
   overflow: hidden;
@@ -308,7 +377,6 @@ textarea:focus-visible {
   gap: .45rem;
 }
 
-/* Animate new comment appearance */
 .comment-list .comment {
   opacity: 0;
   transform: translateY(-6px);
@@ -316,10 +384,7 @@ textarea:focus-visible {
 }
 
 @keyframes fadeInComment {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .comment {
@@ -344,8 +409,6 @@ textarea:focus-visible {
 .comment-author:hover {
   color: #3182ce;
 }
-
-/* comment form */
 
 .comment-form {
   display: flex;
@@ -379,19 +442,20 @@ textarea:focus-visible {
 }
 
 /* ---------------- Profile Page ---------------- */
-
 .profile-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
   margin-bottom: 1.5rem;
 }
 
 .profile-stats {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
   font-size: .9rem;
 }
 
@@ -408,8 +472,24 @@ textarea:focus-visible {
   color: #2563eb;
 }
 
-/* ---------------- Users Grid ---------------- */
+.profile-posts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
 
+.profile-posts .post-content img,
+.profile-posts .post-content video,
+.profile-posts .post-content iframe {
+  width: 100%;
+  max-height: 450px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+/* ---------------- Users Grid ---------------- */
 .user-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
@@ -440,7 +520,6 @@ textarea:focus-visible {
 }
 
 /* ---------------- Guest Notice ---------------- */
-
 .guest-note {
   background: #fef3c7;
   color: #92400e;
@@ -451,15 +530,21 @@ textarea:focus-visible {
 }
 
 /* ---------------- Tablet ---------------- */
-
 @media (max-width: 768px) {
 
   .post {
-    padding: 1.1rem;
+    padding: 1rem 1rem 1.2rem;
+    gap: .6rem;
   }
 
   .post-header {
     gap: .5rem;
+  }
+
+  .post-content iframe,
+  .post-content video,
+  .post-content img {
+    max-height: 400px;
   }
 
   .avatar { width: 38px; height: 38px; }
@@ -469,10 +554,23 @@ textarea:focus-visible {
     flex-direction: column;
     gap: .4rem;
   }
+
+  .profile-header {
+    gap: .8rem;
+  }
+
+  .profile-stats {
+    gap: .6rem;
+  }
+
+  .profile-posts .post-content img,
+  .profile-posts .post-content video,
+  .profile-posts .post-content iframe {
+    max-height: 350px;
+  }
 }
 
 /* ---------------- Mobile ---------------- */
-
 @media (max-width: 480px) {
 
   .avatar { width: 34px; height: 34px; }
@@ -484,11 +582,25 @@ textarea:focus-visible {
   }
 
   .post {
-    padding: 1rem;
+    padding: .8rem .9rem;
+    gap: .5rem;
   }
 
   .post-meta {
-    font-size: .8rem;
+    font-size: .75rem;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .post-actions {
+    flex-direction: column;
+    gap: .3rem;
+  }
+
+  .post-content iframe,
+  .post-content video,
+  .post-content img {
+    max-height: 250px;
   }
 
   .comment-form input[type="text"] {
@@ -498,5 +610,20 @@ textarea:focus-visible {
   .comment-form {
     flex-direction: column;
     gap: .35rem;
+  }
+
+  .profile-header {
+    gap: .5rem;
+  }
+
+  .profile-stats {
+    flex-direction: column;
+    gap: .35rem;
+  }
+
+  .profile-posts .post-content img,
+  .profile-posts .post-content video,
+  .profile-posts .post-content iframe {
+    max-height: 250px;
   }
 }
