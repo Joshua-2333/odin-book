@@ -3,32 +3,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title><%= user.username %> – Following</title>
+  <title><%= profileUser.username %> – Following</title>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/layout.css">
   <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
-  <%- include("../partials/header") %>
+  <!-- Hide nav to prevent double header -->
+  <%- include("../partials/header", { hideNav: true, currentUser }) %>
 
-  <main>
-    <h1><%= user.username %> is following</h1>
+  <main class="following-page">
+    <h1><%= profileUser.username %> is following</h1>
 
     <% if (following.length === 0) { %>
       <p>Not following anyone yet.</p>
     <% } %>
 
-    <ul>
+    <ul class="user-list">
       <% following.forEach(person => { %>
-        <li>
+        <li class="user-card">
           <a href="/users/<%= person.id %>">
-            <%= person.username %>
+            <img
+              src="<%= person.avatar || '/avatars/default.png' %>"
+              alt="<%= person.username %> avatar"
+              class="avatar-small"
+            >
+            <span><%= person.username %></span>
           </a>
         </li>
       <% }) %>
     </ul>
 
-    <a href="/users/<%= user.id %>">← Back to profile</a>
+    <a href="/users/<%= profileUser.id %>">← Back to profile</a>
   </main>
 
   <%- include("../partials/footer") %>

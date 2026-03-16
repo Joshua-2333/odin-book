@@ -26,15 +26,11 @@
     <div class="container">
 
       <% if (success) { %>
-        <div class="alert alert-success">
-          <%= success %>
-        </div>
+        <div class="alert alert-success"><%= success %></div>
       <% } %>
 
       <% if (error) { %>
-        <div class="alert alert-error">
-          <%= error %>
-        </div>
+        <div class="alert alert-error"><%= error %></div>
       <% } %>
 
       <%- body %>
@@ -42,11 +38,12 @@
     </div>
   </main>
 
-    <!-- Footer -->
+  <!-- Footer -->
   <%- include("../partials/footer") %>
 
   <script src="/js/theme.js" defer></script>
   <script src="/js/main.js" defer></script>
+  <script src="/js/mediaPreview.js" defer></script>
 
 </body>
 </html>

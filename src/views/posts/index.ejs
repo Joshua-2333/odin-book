@@ -4,44 +4,22 @@
 
 <!-- Flash messages -->
 <% if (success) { %>
-  <div class="flash flash-success" id="flash-success">
-    <%= success %>
-  </div>
+  <div class="flash flash-success"><%= success %></div>
 <% } %>
-
 <% if (error) { %>
-  <div class="flash flash-error" id="flash-error">
-    <%= error %>
-  </div>
+  <div class="flash flash-error"><%= error %></div>
 <% } %>
 
 <!-- Create Post -->
 <% if (!currentUser.guest) { %>
-  <form
-    action="/posts"
-    method="POST"
-    enctype="multipart/form-data"
-    class="post-form"
-  >
-    <textarea
-      name="content"
-      placeholder="What's on your mind?"
-    ></textarea>
+  <form action="/posts" method="POST" enctype="multipart/form-data" class="post-form">
+    <textarea name="content" placeholder="What's on your mind?" required></textarea>
 
-    <!-- Media Upload -->
     <div class="media-upload">
-      <label for="media" class="media-label">
-        📷 Add Image / GIF / Video
-      </label>
-      <input
-        type="file"
-        id="media"
-        name="media"
-        accept="image/*,video/mp4,video/webm"
-      />
+      <label for="media" class="media-label">📷 Add Image / GIF / Video</label>
+      <input type="file" id="media" name="media" accept="image/*,video/mp4,video/webm" />
     </div>
 
-    <!-- Preview -->
     <div id="media-preview"></div>
 
     <button type="submit" class="btn-primary">Post</button>
@@ -55,33 +33,172 @@
 <!-- Posts Feed -->
 <section class="posts">
   <% posts.forEach(post => { %>
-    <%- include('./post.ejs', { post, currentUser }) %>
+    <article class="post" tabindex="0">
+
+      <!-- Post header -->
+      <div class="post-header">
+        <img src="<%= post.author?.avatar || '/avatars/default.png' %>" class="avatar" alt="<%= post.author?.username || 'Unknown' %> avatar">
+        <a href="/users/<%= post.author?.id || '#' %>" class="post-author">
+          <strong><%= post.author?.username || 'Unknown' %></strong>
+        </a>
+      </div>
+
+      <!-- Post text -->
+      <p class="post-content"><%= post.content %></p>
+
+      <!-- Post media -->
+      <% if (post.mediaUrl) { %>
+        <% 
+          let youtubeId = '';
+          let vimeoId = '';
+          const ext = post.mediaUrl.split('.').pop().toLowerCase();
+
+          if (post.mediaUrl.includes('youtube.com/embed/')) {
+            youtubeId = post.mediaUrl.split('youtube.com/embed/')[1].split(/[?&]/)[0];
+          } else if (post.mediaUrl.includes('youtu.be')) {
+            youtubeId = post.mediaUrl.split('youtu.be/')[1].split(/[?&]/)[0];
+          } else if (post.mediaUrl.includes('youtube.com')) {
+            const urlParams = new URLSearchParams(post.mediaUrl.split('?')[1]);
+            youtubeId = urlParams.get('v');
+          }
+
+          if (post.mediaUrl.includes('vimeo.com')) {
+            vimeoId = post.mediaUrl.split('vimeo.com/')[1].split(/[?&]/)[0];
+          }
+        %>
+
+        <% if (youtubeId) { %>
+          <iframe class="post-media" width="560" height="315"
+            src="https://www.youtube.com/embed/<%= youtubeId %>"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+
+        <% } else if (vimeoId) { %>
+          <iframe class="post-media" width="560" height="315"
+            src="https://player.vimeo.com/video/<%= vimeoId %>"
+            frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen></iframe>
+
+        <% } else if (["mp4","webm"].includes(ext)) { %>
+          <video controls class="post-media">
+            <source src="<%= post.mediaUrl %>" type="video/<%= ext %>">
+            Your browser does not support the video tag.
+          </video>
+
+        <% } else if (["jpg","jpeg","png","gif","webp"].includes(ext)) { %>
+          <img src="<%= post.mediaUrl %>" class="post-media" alt="Post media">
+
+        <% } else { %>
+          <a href="<%= post.mediaUrl %>" target="_blank">View media</a>
+        <% } %>
+      <% } %>
+
+      <div class="post-meta">
+        <span>❤️ <%= post.likes.length %></span>
+        <span class="comment-toggle" tabindex="0" aria-expanded="false" aria-controls="comments-<%= post.id %>">
+          💬 <%= post.comments.length %> Comments
+        </span>
+      </div>
+
+      <!-- Comments -->
+      <section class="comments" id="comments-<%= post.id %>">
+        <div class="comment-list">
+          <% post.comments.forEach(comment => { %>
+            <div class="comment">
+              <img src="<%= comment.author?.avatar || '/avatars/default.png' %>" class="avatar-small" alt="<%= comment.author?.username || 'Unknown' %> avatar">
+              <strong class="comment-author">
+                <a href="/users/<%= comment.author?.id || '#' %>"><%= comment.author?.username || 'Unknown' %></a>
+              </strong>
+              <span><%= comment.content %></span>
+            </div>
+          <% }) %>
+        </div>
+
+        <% if (!currentUser.guest) { %>
+          <form class="comment-form" data-post-id="<%= post.id %>">
+            <input type="text" name="content" placeholder="Add a comment..." required>
+            <button type="submit">Comment</button>
+          </form>
+        <% } %>
+      </section>
+
+    </article>
   <% }) %>
 </section>
 
-<!-- Media Preview Script -->
 <script>
-const input = document.getElementById("media");
-const preview = document.getElementById("media-preview");
+document.addEventListener('DOMContentLoaded', () => {
 
-if (input) {
-  input.addEventListener("change", () => {
-    preview.innerHTML = "";
-    const file = input.files[0];
-    if (!file) return;
+  // --- Toggle comments open/close ---
+  document.querySelectorAll('.comment-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const targetId = toggle.getAttribute('aria-controls');
+      const commentsSection = document.getElementById(targetId);
+      if (!commentsSection) return;
 
-    const url = URL.createObjectURL(file);
+      const isOpen = commentsSection.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+    });
 
-    if (file.type.startsWith("video")) {
-      const video = document.createElement("video");
-      video.src = url;
-      video.controls = true;
-      preview.appendChild(video);
-    } else {
-      const img = document.createElement("img");
-      img.src = url;
-      preview.appendChild(img);
-    }
+    toggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle.click();
+      }
+    });
   });
-}
+
+  // --- Handle comment form submissions ---
+  document.querySelectorAll('.comment-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const postId = form.dataset.postId;
+      const input = form.querySelector('input[name="content"]');
+      const content = input.value.trim();
+      if (!content) return;
+
+      try {
+        const res = await fetch(`/posts/${postId}/comments`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+
+        if (!res.ok) throw new Error('Failed to post comment');
+
+        const comment = await res.json();
+        const commentList = form.closest('.comments').querySelector('.comment-list');
+
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.innerHTML = `
+          <img src="${comment.author.avatar}" class="avatar-small" alt="${comment.author.username} avatar">
+          <strong class="comment-author">
+            <a href="/users/${comment.author.id}">${comment.author.username}</a>
+          </strong>
+          <span>${comment.content}</span>
+        `;
+        commentList.appendChild(div);
+        input.value = '';
+
+        // Open comments if not already
+        const commentsSection = form.closest('.comments');
+        if (!commentsSection.classList.contains('open')) {
+          commentsSection.classList.add('open');
+          const toggle = document.querySelector(`[aria-controls="${commentsSection.id}"]`);
+          if (toggle) toggle.setAttribute('aria-expanded', true);
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert('Error posting comment.');
+      }
+    });
+  });
+
+});
 </script>

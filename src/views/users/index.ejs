@@ -5,11 +5,11 @@
 
   <!-- Flash messages -->
   <% if (success) { %>
-    <div class="flash flash-success" id="flash-success"><%= success %></div>
+    <div class="flash flash-success"><%= success %></div>
   <% } %>
 
   <% if (error) { %>
-    <div class="flash flash-error" id="flash-error"><%= error %></div>
+    <div class="flash flash-error"><%= error %></div>
   <% } %>
 
   <% if (users.length === 0) { %>
@@ -17,23 +17,28 @@
   <% } %>
 
   <section class="user-list">
-    <% users.forEach(user => { %>
+    <% users.forEach(profileUser => { %>
 
       <div class="user-card">
-        <h2>
-          <a href="/users/<%= user.id %>">
-            <%= user.username %>
-          </a>
-        </h2>
+
+        <!-- Avatar + Username -->
+        <a href="/users/<%= profileUser.id %>" class="user-link">
+          <img
+            src="<%= profileUser.avatar || '/avatars/default.png' %>"
+            alt="<%= profileUser.username %> avatar"
+            class="avatar-small"
+          >
+          <span><%= profileUser.username %></span>
+        </a>
 
         <!-- Follow / Unfollow button -->
-        <% if (!currentUser.guest) { %>
-          <form action="/users/<%= user.id %>/<%= user.isFollowing ? 'unfollow' : 'follow' %>" method="POST">
+        <% if (!currentUser.guest && currentUser.id !== profileUser.id) { %>
+          <form action="/users/<%= profileUser.id %>/<%= profileUser.isFollowing ? 'unfollow' : 'follow' %>" method="POST">
             <button
               type="submit"
-              class="<%= user.isFollowing ? 'btn-secondary' : 'btn-primary' %>"
+              class="<%= profileUser.isFollowing ? 'btn-secondary' : 'btn-primary' %>"
             >
-              <%= user.isFollowing ? 'Unfollow' : 'Follow' %>
+              <%= profileUser.isFollowing ? 'Unfollow' : 'Follow' %>
             </button>
           </form>
         <% } %>
@@ -47,11 +52,8 @@
 <script>
   // Auto-hide flash messages
   setTimeout(() => {
-    const success = document.getElementById("flash-success");
-    const error = document.getElementById("flash-error");
-
-    [success, error].forEach(el => {
-      if (el) el.style.animation = "fadeOutFlash 0.8s forwards";
+    document.querySelectorAll('.flash').forEach(el => {
+      el.style.animation = "fadeOutFlash 0.8s forwards";
     });
   }, 4000);
 </script>

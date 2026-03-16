@@ -1,5 +1,4 @@
 // src/controllers/postController.js
-
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -9,7 +8,7 @@ const postController = {
     try {
       const posts = await prisma.post.findMany({
         include: {
-          author: true,
+          author: true, // Include author info
           likes: true,
           comments: {
             include: { author: true },
@@ -19,15 +18,36 @@ const postController = {
         orderBy: { createdAt: "desc" },
       });
 
+      // Ensure every post and comment has valid author info
+      const safePosts = posts.map(post => ({
+        ...post,
+        mediaUrl: post.mediaUrl || null,
+        mediaType: post.mediaType || null,
+        author: post.author || {
+          id: req.user?.id || null,
+          username: req.user?.username || "Unknown",
+          avatar: req.user?.avatar || "/avatars/default.png",
+        },
+        comments: post.comments.map(comment => ({
+          ...comment,
+          author: comment.author || {
+            id: null,
+            username: "Unknown",
+            avatar: "/avatars/default.png",
+          },
+        })),
+      }));
+
       res.render("posts/index", {
         layout: "layouts/main",
         title: "Posts",
-        posts,
+        posts: safePosts,
         success: req.session.success,
         error: req.session.error,
         currentUser: req.user,
       });
 
+      // Clear flash messages after render
       req.session.success = null;
       req.session.error = null;
 
@@ -62,13 +82,8 @@ const postController = {
         mediaUrl = "/uploads/" + req.file.filename;
 
         if (req.file.mimetype.startsWith("image")) {
-          mediaType =
-            req.file.mimetype === "image/gif"
-              ? "GIF"
-              : "IMAGE";
-        }
-
-        if (req.file.mimetype.startsWith("video")) {
+          mediaType = req.file.mimetype === "image/gif" ? "GIF" : "IMAGE";
+        } else if (req.file.mimetype.startsWith("video")) {
           mediaType = "VIDEO";
         }
       }
@@ -103,7 +118,6 @@ const postController = {
           postId,
         },
       });
-
       req.session.success = "You liked the post!";
     } catch (err) {
       req.session.error = "You already liked this post.";
