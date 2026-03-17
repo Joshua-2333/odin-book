@@ -14,9 +14,7 @@ dotenv.config();
 
 const app = express();
 
-// ------------------
-// View engine
-// ------------------
+//View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src/views"));
 
@@ -24,37 +22,26 @@ app.set("views", path.join(process.cwd(), "src/views"));
 app.use(expressLayouts);
 app.set("layout", "layouts/main");
 
-// ------------------
-// Body parsing
-// ------------------
+//Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ------------------
-// Static files
-// ------------------
+//Static files
 app.use(express.static(path.join(process.cwd(), "src/public")));
 
-// ------------------
-// Sessions
-// ------------------
+//Sessions
 const PGStore = pgSession(session);
 app.use(session(sessionConfig(PGStore)));
 
-// ------------------
-// Passport
-// ------------------
+//Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ------------------
-// Guest middleware
-// ------------------
+//Guest middleware
+
 app.use(guestMiddleware);
 
-// ------------------
-// Flash + locals
-// ------------------
+//Flash + locals
 app.use((req, res, next) => {
   res.locals.currentUser = req.user || null;
   res.locals.success = req.session.success || null;
@@ -65,14 +52,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// ------------------
-// Routes
-// ------------------
+//Routes
 app.use("/", routes);
 
-// ------------------
-// Global error handler
-// ------------------
+//Global error handler
 app.use((err, req, res, next) => {
   console.error("Global error handler:", err);
 
@@ -95,9 +78,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ------------------
-// 404 handler
-// ------------------
+//404 handler
 app.use((req, res) => {
   res.status(404).render("partials/404", {
     title: "Page Not Found",
