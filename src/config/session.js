@@ -17,10 +17,12 @@ export default function (PGStore) {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
+      httpOnly: true,
     },
   };
 }
