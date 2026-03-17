@@ -1,0 +1,7 @@
+<!-- src/views/partials/500.ejs -->
+<h1><%= title || "Server Error" %></h1>
+<p>Something went wrong.</p>
+
+<% if (error && error.message) { %>
+  <pre><%= error.message %></pre>
+<% } %>

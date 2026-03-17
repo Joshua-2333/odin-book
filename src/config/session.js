@@ -5,7 +5,12 @@ dotenv.config();
 export default function (PGStore) {
   return {
     store: new PGStore({
-      conString: process.env.DATABASE_URL,
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
       tableName: "session",
     }),
     secret: process.env.SESSION_SECRET,
@@ -13,6 +18,8 @@ export default function (PGStore) {
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
     },
   };
 }
