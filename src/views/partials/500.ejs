@@ -1,7 +1,22 @@
 <!-- src/views/partials/500.ejs -->
-<h1><%= title || "Server Error" %></h1>
-<p>Something went wrong.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title || "Server Error" %></title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+</head>
+<body>
+  <main>
+    <h1><%= title || "Server Error" %></h1>
+    <p>Something went wrong.</p>
 
-<% if (error && error.message) { %>
-  <pre><%= error.message %></pre>
-<% } %>
+    <% if (error && error.message) { %>
+      <pre><%= error.message %></pre>
+    <% } %>
+
+    <a href="/">Go back home</a>
+  </main>
+</body>
+</html>

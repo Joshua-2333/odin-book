@@ -12,6 +12,7 @@ export default function (PGStore) {
         },
       },
       tableName: "session",
+      createTableIfMissing: true,
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,

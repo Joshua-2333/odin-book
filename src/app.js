@@ -47,11 +47,14 @@ app.use(guestMiddleware);
 // Flash + locals
 app.use((req, res, next) => {
   res.locals.currentUser = req.user || null;
-  res.locals.success = req.session.success || null;
-  res.locals.error = req.session.error || null;
+  res.locals.success = req.session?.success || null;
+  res.locals.error = req.session?.error || null;
 
-  delete req.session.success;
-  delete req.session.error;
+  if (req.session) {
+    delete req.session.success;
+    delete req.session.error;
+  }
+
   next();
 });
 
@@ -74,15 +77,22 @@ app.use((err, req, res, next) => {
   }
 
   return res.status(err.status || 500).render("partials/500", {
+    layout: false,
     title: "Server Error",
     error: err,
+    currentUser: null,
+    success: null,
   });
 });
 
 // 404
 app.use((req, res) => {
   res.status(404).render("partials/404", {
+    layout: false,
     title: "Page Not Found",
+    currentUser: null,
+    success: null,
+    error: null,
   });
 });
 
