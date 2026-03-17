@@ -59,7 +59,7 @@ const commentController = {
             select: {
               id: true,
               username: true,
-              avatar: true,
+              profileImage: true,
             }
           }
         }
@@ -72,7 +72,7 @@ const commentController = {
         author: {
           id: newComment.author.id,
           username: newComment.author.username,
-          avatar: newComment.author.avatar || DEFAULT_AVATAR
+          avatar: newComment.author.profileImage || DEFAULT_AVATAR
         }
       };
 
@@ -91,7 +91,7 @@ const commentController = {
 
       if (isAjax) {
         return res.status(500).json({
-          error: "Failed to add comment."
+          error: err.message || "Failed to add comment."
         });
       }
 

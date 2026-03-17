@@ -2,13 +2,56 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+const DEFAULT_AVATAR = "/avatars/default.png";
+
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp"];
+const VIDEO_EXTENSIONS = ["mp4", "webm"];
+
+function extractMediaFromContent(rawContent = "") {
+  const content = rawContent.trim();
+  const urlRegex = /(https?:\/\/[^\s]+)/gi;
+  const urls = content.match(urlRegex) || [];
+
+  let mediaUrl = null;
+  let mediaType = null;
+
+  for (const url of urls) {
+    const cleanUrl = url.trim();
+    const lowerUrl = cleanUrl.toLowerCase();
+
+    if (IMAGE_EXTENSIONS.some(ext => lowerUrl.includes(`.${ext}`))) {
+      mediaUrl = cleanUrl;
+      mediaType = lowerUrl.includes(".gif") ? "GIF" : "IMAGE";
+      break;
+    }
+
+    if (VIDEO_EXTENSIONS.some(ext => lowerUrl.includes(`.${ext}`))) {
+      mediaUrl = cleanUrl;
+      mediaType = "VIDEO";
+      break;
+    }
+  }
+
+  let cleanedContent = content;
+
+  if (mediaUrl) {
+    cleanedContent = cleanedContent.replace(mediaUrl, "").trim();
+  }
+
+  return {
+    cleanedContent,
+    mediaUrl,
+    mediaType
+  };
+}
+
 const postController = {
   // GET /posts
   async index(req, res) {
     try {
       const posts = await prisma.post.findMany({
         include: {
-          author: true, // Include author info
+          author: true,
           likes: true,
           comments: {
             include: { author: true },
@@ -18,23 +61,34 @@ const postController = {
         orderBy: { createdAt: "desc" },
       });
 
-      // Ensure every post and comment has valid author info
       const safePosts = posts.map(post => ({
         ...post,
         mediaUrl: post.mediaUrl || null,
         mediaType: post.mediaType || null,
-        author: post.author || {
-          id: req.user?.id || null,
-          username: req.user?.username || "Unknown",
-          avatar: req.user?.avatar || "/avatars/default.png",
-        },
+
+        author: post.author
+          ? {
+              ...post.author,
+              avatar: post.author.profileImage || DEFAULT_AVATAR,
+            }
+          : {
+              id: req.user?.id || null,
+              username: req.user?.username || "Unknown",
+              avatar: req.user?.profileImage || DEFAULT_AVATAR,
+            },
+
         comments: post.comments.map(comment => ({
           ...comment,
-          author: comment.author || {
-            id: null,
-            username: "Unknown",
-            avatar: "/avatars/default.png",
-          },
+          author: comment.author
+            ? {
+                ...comment.author,
+                avatar: comment.author.profileImage || DEFAULT_AVATAR,
+              }
+            : {
+                id: null,
+                username: "Unknown",
+                avatar: DEFAULT_AVATAR,
+              },
         })),
       }));
 
@@ -44,7 +98,10 @@ const postController = {
         posts: safePosts,
         success: req.session.success,
         error: req.session.error,
-        currentUser: req.user,
+        currentUser: {
+          ...req.user,
+          avatar: req.user?.profileImage || DEFAULT_AVATAR,
+        },
       });
 
       // Clear flash messages after render
@@ -60,19 +117,23 @@ const postController = {
         posts: [],
         success: null,
         error: "Failed to load posts.",
-        currentUser: req.user,
+        currentUser: {
+          ...req.user,
+          avatar: req.user?.profileImage || DEFAULT_AVATAR,
+        },
       });
     }
   },
 
   // POST /posts
   async create(req, res) {
-    const { content } = req.body;
+    const rawContent = req.body.content || "";
 
+    let content = rawContent;
     let mediaUrl = null;
     let mediaType = null;
 
-    if (!content?.trim() && !req.file) {
+    if (!rawContent?.trim() && !req.file) {
       req.session.error = "Post must contain text or media.";
       return res.redirect("/posts");
     }
@@ -86,11 +147,21 @@ const postController = {
         } else if (req.file.mimetype.startsWith("video")) {
           mediaType = "VIDEO";
         }
+      } else {
+        const extracted = extractMediaFromContent(rawContent);
+        content = extracted.cleanedContent;
+        mediaUrl = extracted.mediaUrl;
+        mediaType = extracted.mediaType;
+      }
+
+      if (!content?.trim() && !mediaUrl) {
+        req.session.error = "Post must contain text or media.";
+        return res.redirect("/posts");
       }
 
       await prisma.post.create({
         data: {
-          content,
+          content: content?.trim() || "",
           mediaUrl,
           mediaType,
           authorId: req.user.id,
@@ -113,7 +184,6 @@ const postController = {
     const userId = req.user.id;
 
     try {
-      // Check if the user already liked the post
       const existingLike = await prisma.like.findFirst({
         where: { postId, userId },
       });
@@ -121,25 +191,21 @@ const postController = {
       let liked;
 
       if (existingLike) {
-        // Unlike
         await prisma.like.delete({
           where: { id: existingLike.id },
         });
         liked = false;
       } else {
-        // Like
         await prisma.like.create({
           data: { postId, userId },
         });
         liked = true;
       }
 
-      // PATCH: get the **updated likes count** for the post
       const likesCount = await prisma.like.count({
         where: { postId },
       });
 
-      // Respond with updated likes count and liked status
       res.json({ likesCount, liked });
 
     } catch (err) {
@@ -150,7 +216,7 @@ const postController = {
 
   // Helper to get a post by ID (for routes)
   async getById(id) {
-    return await prisma.post.findUnique({
+    const post = await prisma.post.findUnique({
       where: { id: Number(id) },
       include: {
         author: true,
@@ -158,6 +224,32 @@ const postController = {
         comments: { include: { author: true } },
       },
     });
+
+    if (!post) return null;
+
+    return {
+      ...post,
+      author: post.author
+        ? {
+            ...post.author,
+            avatar: post.author.profileImage || DEFAULT_AVATAR,
+          }
+        : null,
+
+      comments: post.comments.map(comment => ({
+        ...comment,
+        author: comment.author
+          ? {
+              ...comment.author,
+              avatar: comment.author.profileImage || DEFAULT_AVATAR,
+            }
+          : {
+              id: null,
+              username: "Unknown",
+              avatar: DEFAULT_AVATAR,
+            },
+      })),
+    };
   },
 };
 

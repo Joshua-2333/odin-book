@@ -35,6 +35,47 @@
   <% posts.forEach(post => { %>
     <article class="post" tabindex="0">
 
+      <%
+        const rawContent = post.content || "";
+        const urlRegex = /(https?:\/\/[^\s]+)/gi;
+        const foundUrls = rawContent.match(urlRegex) || [];
+
+        let detectedMediaUrl = post.mediaUrl || null;
+        let detectedMediaType = post.mediaType || null;
+
+        if (!detectedMediaUrl) {
+          for (const url of foundUrls) {
+            const lowerUrl = url.toLowerCase();
+
+            if (
+              lowerUrl.includes(".jpg") ||
+              lowerUrl.includes(".jpeg") ||
+              lowerUrl.includes(".png") ||
+              lowerUrl.includes(".gif") ||
+              lowerUrl.includes(".webp")
+            ) {
+              detectedMediaUrl = url;
+              detectedMediaType = lowerUrl.includes(".gif") ? "GIF" : "IMAGE";
+              break;
+            }
+
+            if (
+              lowerUrl.includes(".mp4") ||
+              lowerUrl.includes(".webm")
+            ) {
+              detectedMediaUrl = url;
+              detectedMediaType = "VIDEO";
+              break;
+            }
+          }
+        }
+
+        let cleanedContent = rawContent;
+        if (detectedMediaUrl && rawContent.includes(detectedMediaUrl)) {
+          cleanedContent = rawContent.replace(detectedMediaUrl, "").trim();
+        }
+      %>
+
       <!-- Post header -->
       <div class="post-header">
         <img src="<%= post.author?.avatar || '/avatars/default.png' %>" class="avatar" alt="<%= post.author?.username || 'Unknown' %> avatar">
@@ -44,26 +85,31 @@
       </div>
 
       <!-- Post text -->
-      <p class="post-content"><%= post.content %></p>
+      <% if (cleanedContent) { %>
+        <p class="post-content"><%= cleanedContent %></p>
+      <% } %>
 
       <!-- Post media -->
-      <% if (post.mediaUrl) { %>
-        <% 
+      <% if (detectedMediaUrl) { %>
+        <%
           let youtubeId = '';
           let vimeoId = '';
-          const ext = post.mediaUrl.split('.').pop().toLowerCase();
+          const ext = detectedMediaUrl.split('.').pop().toLowerCase().split('?')[0].split('#')[0];
 
-          if (post.mediaUrl.includes('youtube.com/embed/')) {
-            youtubeId = post.mediaUrl.split('youtube.com/embed/')[1].split(/[?&]/)[0];
-          } else if (post.mediaUrl.includes('youtu.be')) {
-            youtubeId = post.mediaUrl.split('youtu.be/')[1].split(/[?&]/)[0];
-          } else if (post.mediaUrl.includes('youtube.com')) {
-            const urlParams = new URLSearchParams(post.mediaUrl.split('?')[1]);
-            youtubeId = urlParams.get('v');
+          if (detectedMediaUrl.includes('youtube.com/embed/')) {
+            youtubeId = detectedMediaUrl.split('youtube.com/embed/')[1].split(/[?&]/)[0];
+          } else if (detectedMediaUrl.includes('youtu.be')) {
+            youtubeId = detectedMediaUrl.split('youtu.be/')[1].split(/[?&]/)[0];
+          } else if (detectedMediaUrl.includes('youtube.com')) {
+            const parts = detectedMediaUrl.split('?');
+            if (parts[1]) {
+              const urlParams = new URLSearchParams(parts[1]);
+              youtubeId = urlParams.get('v');
+            }
           }
 
-          if (post.mediaUrl.includes('vimeo.com')) {
-            vimeoId = post.mediaUrl.split('vimeo.com/')[1].split(/[?&]/)[0];
+          if (detectedMediaUrl.includes('vimeo.com')) {
+            vimeoId = detectedMediaUrl.split('vimeo.com/')[1].split(/[?&]/)[0];
           }
         %>
 
@@ -82,17 +128,17 @@
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen></iframe>
 
-        <% } else if (["mp4","webm"].includes(ext)) { %>
+        <% } else if (["mp4","webm"].includes(ext) || detectedMediaType === "VIDEO") { %>
           <video controls class="post-media">
-            <source src="<%= post.mediaUrl %>" type="video/<%= ext %>">
+            <source src="<%= detectedMediaUrl %>" type="video/<%= ext %>">
             Your browser does not support the video tag.
           </video>
 
-        <% } else if (["jpg","jpeg","png","gif","webp"].includes(ext)) { %>
-          <img src="<%= post.mediaUrl %>" class="post-media" alt="Post media">
+        <% } else if (["jpg","jpeg","png","gif","webp"].includes(ext) || detectedMediaType === "IMAGE" || detectedMediaType === "GIF") { %>
+          <img src="<%= detectedMediaUrl %>" class="post-media" alt="Post media">
 
         <% } else { %>
-          <a href="<%= post.mediaUrl %>" target="_blank">View media</a>
+          <a href="<%= detectedMediaUrl %>" target="_blank">View media</a>
         <% } %>
       <% } %>
 
@@ -164,15 +210,28 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const res = await fetch(`/posts/${postId}/like`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
         });
+
+        const contentType = res.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+
+        if (!isJson) {
+          const text = await res.text();
+          console.error('Unexpected non-JSON like response:', text);
+          throw new Error('Server returned a non-JSON response.');
+        }
+
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to like/unlike post');
 
-        // Update like count
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to like/unlike post');
+        }
+
         likesCountSpan.textContent = data.likesCount;
-
-        // Toggle liked state
         btn.classList.toggle('liked', data.liked);
         btn.setAttribute('aria-pressed', data.liked);
 
@@ -214,12 +273,28 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const res = await fetch(`/posts/${postId}/comments`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify({ content })
         });
-        if (!res.ok) throw new Error('Failed to post comment');
+
+        const contentType = res.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+
+        if (!isJson) {
+          const text = await res.text();
+          console.error('Unexpected non-JSON comment response:', text);
+          throw new Error('Server returned a non-JSON response.');
+        }
 
         const comment = await res.json();
+
+        if (!res.ok) {
+          throw new Error(comment.error || 'Failed to post comment');
+        }
+
         const commentList = form.closest('.comments').querySelector('.comment-list');
 
         const div = document.createElement('div');
@@ -238,12 +313,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!commentsSection.classList.contains('open')) {
           commentsSection.classList.add('open');
           const toggle = document.querySelector(`[aria-controls="${commentsSection.id}"]`);
-          if (toggle) toggle.setAttribute('aria-expanded', true);
+          if (toggle) {
+            toggle.setAttribute('aria-expanded', true);
+          }
+        }
+
+        const toggle = document.querySelector(`[aria-controls="comments-${postId}"]`);
+        if (toggle) {
+          const match = toggle.textContent.match(/\d+/);
+          const currentCount = match ? Number(match[0]) : 0;
+          toggle.textContent = `💬 ${currentCount + 1} Comments`;
         }
 
       } catch (err) {
         console.error(err);
-        alert('Error posting comment.');
+        alert(err.message || 'Error posting comment.');
       }
     });
   });

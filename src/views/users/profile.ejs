@@ -8,16 +8,24 @@
       src="<%= profileUser.avatar || '/avatars/default.png' %>"
       alt="avatar"
       class="avatar-large"
+      id="avatar-preview"
     >
 
     <% if (isOwnProfile) { %>
       <form
-        action="/users/profile/avatar"
-        method="POST"
+        id="avatar-form"
         enctype="multipart/form-data"
       >
-        <input type="file" name="avatar" accept="image/*" required>
-        <button type="submit" class="btn-primary">Change Avatar</button>
+        <input
+          type="file"
+          name="avatar"
+          accept="image/*"
+          required
+          id="avatar-input"
+        >
+        <button type="submit" class="btn-primary">
+          Change Avatar
+        </button>
       </form>
     <% } %>
   </div>
@@ -31,6 +39,7 @@
       <a href="/users/<%= profileUser.id %>/followers">
         <strong><%= followersCount %></strong> Followers
       </a>
+
       <a href="/users/<%= profileUser.id %>/following">
         <strong><%= followingCount %></strong> Following
       </a>
@@ -38,7 +47,10 @@
 
     <!-- Follow / Unfollow -->
     <% if (!currentUser.guest && !isOwnProfile) { %>
-      <form action="/users/<%= profileUser.id %>/<%= isFollowing ? 'unfollow' : 'follow' %>" method="POST">
+      <form
+        action="/users/<%= profileUser.id %>/<%= isFollowing ? 'unfollow' : 'follow' %>"
+        method="POST"
+      >
         <button
           type="submit"
           class="<%= isFollowing ? 'btn-secondary' : 'btn-primary' %>"
@@ -69,42 +81,157 @@
     <% posts.forEach(post => { %>
       <article class="post" tabindex="0">
 
+        <%
+          const rawContent = post.content || "";
+          const urlRegex = /(https?:\/\/[^\s]+)/gi;
+          const foundUrls = rawContent.match(urlRegex) || [];
+
+          let detectedMediaUrl = post.mediaUrl || null;
+          let detectedMediaType = post.mediaType || null;
+
+          if (!detectedMediaUrl) {
+            for (const url of foundUrls) {
+              const lowerUrl = url.toLowerCase();
+
+              if (
+                lowerUrl.includes(".jpg") ||
+                lowerUrl.includes(".jpeg") ||
+                lowerUrl.includes(".png") ||
+                lowerUrl.includes(".gif") ||
+                lowerUrl.includes(".webp")
+              ) {
+                detectedMediaUrl = url;
+                detectedMediaType = lowerUrl.includes(".gif") ? "GIF" : "IMAGE";
+                break;
+              }
+
+              if (
+                lowerUrl.includes(".mp4") ||
+                lowerUrl.includes(".webm")
+              ) {
+                detectedMediaUrl = url;
+                detectedMediaType = "VIDEO";
+                break;
+              }
+            }
+          }
+
+          let cleanedContent = rawContent;
+          if (detectedMediaUrl && rawContent.includes(detectedMediaUrl)) {
+            cleanedContent = rawContent.replace(detectedMediaUrl, "").trim();
+          }
+        %>
+
         <!-- Post header -->
         <div class="post-header">
+
           <% const author = post.author || profileUser; %>
-          <img 
-            src="<%= author.avatar || '/avatars/default.png' %>" 
-            class="avatar" 
+
+          <img
+            src="<%= author.avatar || '/avatars/default.png' %>"
+            class="avatar"
             alt="<%= author.username %> avatar"
           >
+
           <a href="/users/<%= author.id %>" class="post-author">
             <strong><%= author.username %></strong>
           </a>
+
         </div>
 
         <!-- Post text -->
-        <% if (post.content) { %>
-          <p class="post-content"><%= post.content %></p>
+        <% if (cleanedContent) { %>
+          <p class="post-content"><%= cleanedContent %></p>
         <% } %>
 
         <!-- Post media -->
-        <% if (post.mediaUrl) { %>
-          <% const ext = post.mediaUrl.split('.').pop().toLowerCase(); %>
+        <% if (detectedMediaUrl) { %>
 
-          <% if (["mp4","webm"].includes(ext) || post.mediaType === 'VIDEO') { %>
-            <div class="video-wrapper" style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 12px; margin-top: 0.5rem;">
-              <video controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
-                <source src="<%= post.mediaUrl %>" type="video/<%= ext %>">
+          <%
+            let youtubeId = '';
+            let vimeoId = '';
+            const ext = detectedMediaUrl.split('.').pop().toLowerCase().split('?')[0].split('#')[0];
+
+            if (detectedMediaUrl.includes('youtube.com/embed/')) {
+              youtubeId = detectedMediaUrl.split('youtube.com/embed/')[1].split(/[?&]/)[0];
+            } else if (detectedMediaUrl.includes('youtu.be')) {
+              youtubeId = detectedMediaUrl.split('youtu.be/')[1].split(/[?&]/)[0];
+            } else if (detectedMediaUrl.includes('youtube.com')) {
+              const parts = detectedMediaUrl.split('?');
+              if (parts[1]) {
+                const urlParams = new URLSearchParams(parts[1]);
+                youtubeId = urlParams.get('v');
+              }
+            }
+
+            if (detectedMediaUrl.includes('vimeo.com')) {
+              vimeoId = detectedMediaUrl.split('vimeo.com/')[1].split(/[?&]/)[0];
+            }
+          %>
+
+          <% if (youtubeId) { %>
+
+            <iframe
+              class="post-media"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/<%= youtubeId %>"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+
+          <% } else if (vimeoId) { %>
+
+            <iframe
+              class="post-media"
+              width="560"
+              height="315"
+              src="https://player.vimeo.com/video/<%= vimeoId %>"
+              frameborder="0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+
+          <% } else if (["mp4","webm"].includes(ext) || detectedMediaType === 'VIDEO') { %>
+
+            <div
+              class="video-wrapper"
+              style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 12px; margin-top: 0.5rem;"
+            >
+              <video
+                controls
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
+              >
+                <source
+                  src="<%= detectedMediaUrl %>"
+                  type="video/<%= ext %>"
+                >
                 Your browser does not support the video tag.
               </video>
             </div>
+
+          <% } else if (["jpg","jpeg","png","gif","webp"].includes(ext) || detectedMediaType === 'IMAGE' || detectedMediaType === 'GIF') { %>
+
+            <img
+              src="<%= detectedMediaUrl %>"
+              class="post-media"
+              alt="Post media"
+              style="width: 100%; border-radius: 12px; object-fit: cover; display: block; margin-top: 0.5rem;"
+            >
+
           <% } else { %>
-            <img src="<%= post.mediaUrl %>" class="post-media" alt="Post media" style="width: 100%; border-radius: 12px; object-fit: cover; display: block; margin-top: 0.5rem;">
+
+            <a href="<%= detectedMediaUrl %>" target="_blank">View media</a>
+
           <% } %>
+
         <% } %>
 
         <div class="post-meta">
           <span>❤️ <%= post.likes.length %></span>
+
           <span
             class="comment-toggle"
             tabindex="0"
@@ -117,33 +244,58 @@
 
         <!-- Comments -->
         <section class="comments" id="comments-<%= post.id %>">
+
           <% post.comments.forEach(comment => { %>
-            <% const commentAuthor = comment.author || { id: null, username: "Unknown", avatar: "/avatars/default.png" }; %>
+
+            <% const commentAuthor = comment.author || {
+              id: null,
+              username: "Unknown",
+              avatar: "/avatars/default.png"
+            }; %>
+
             <div class="comment">
-              <img 
-                src="<%= commentAuthor.avatar %>" 
-                class="avatar-small" 
+
+              <img
+                src="<%= commentAuthor.avatar %>"
+                class="avatar-small"
                 alt="<%= commentAuthor.username %> avatar"
               >
+
               <strong>
                 <a href="/users/<%= commentAuthor.id || '#' %>">
                   <%= commentAuthor.username %>
                 </a>
               </strong>
+
               <span><%= comment.content %></span>
+
             </div>
+
           <% }) %>
 
           <% if (!currentUser.guest) { %>
-            <form action="/posts/<%= post.id %>/comments" method="POST" class="comment-form">
-              <input type="text" name="content" placeholder="Add a comment..." required>
+
+            <form
+              action="/posts/<%= post.id %>/comments"
+              method="POST"
+              class="comment-form"
+            >
+              <input
+                type="text"
+                name="content"
+                placeholder="Add a comment..."
+                required
+              >
               <button type="submit">Comment</button>
             </form>
+
           <% } %>
+
         </section>
 
       </article>
     <% }) %>
+
   </section>
 
 </main>

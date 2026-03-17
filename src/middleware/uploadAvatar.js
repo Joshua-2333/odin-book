@@ -2,67 +2,44 @@
 
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
-/*
-  Needed because __dirname does not exist in ES modules
-*/
+/* __dirname workaround for ES modules */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/*
-  Storage configuration
-*/
+/* Ensure avatars folder exists */
+const AVATAR_DIR = path.join(__dirname, "../public/avatars");
+if (!fs.existsSync(AVATAR_DIR)) {
+  fs.mkdirSync(AVATAR_DIR, { recursive: true });
+}
+
+/* Storage configuration */
 const storage = multer.diskStorage({
-
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../public/avatars"));
+    cb(null, AVATAR_DIR);
   },
-
   filename: (req, file, cb) => {
-
-    const uniqueName =
-      Date.now() + "-" + Math.round(Math.random() * 1e9);
-
+    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueName + path.extname(file.originalname));
-
-  }
-
+  },
 });
 
-/*
-  File filter for security
-  Only allow images
-*/
+/* File filter: only allow image types */
 const fileFilter = (req, file, cb) => {
-
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif"
-  ];
-
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed"));
-  }
-
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (allowedTypes.includes(file.mimetype)) cb(null, true);
+  else cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", "Only image files are allowed"));
 };
 
-/*
-  Upload middleware
-*/
+/* Multer upload instance */
 const uploadAvatar = multer({
-
   storage,
   fileFilter,
-
   limits: {
-    fileSize: 2 * 1024 * 1024 
-  }
-
+    fileSize: 2 * 1024 * 1024, // 2 MB max
+  },
 });
 
 export default uploadAvatar;
